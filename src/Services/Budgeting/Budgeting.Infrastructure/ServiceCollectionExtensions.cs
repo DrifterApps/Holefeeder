@@ -1,4 +1,6 @@
-﻿using DrifterApps.Holefeeder.Budgeting.Application.Contracts;
+﻿using AutoMapper;
+
+using DrifterApps.Holefeeder.Budgeting.Application.Contracts;
 using DrifterApps.Holefeeder.Budgeting.Domain.BoundedContext.TransactionContext;
 using DrifterApps.Holefeeder.Budgeting.Infrastructure.Context;
 using DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories;

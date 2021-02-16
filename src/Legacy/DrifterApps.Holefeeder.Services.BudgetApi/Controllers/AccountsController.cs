@@ -16,6 +16,7 @@ using Microsoft.Identity.Web.Resource;
 namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
 {
     [Route("api/v1/[controller]"), Authorize(Policy = "registered_users")]
+    [RequiredScope(Scopes.REGISTERED_USER)]
     public class AccountsController : Controller
     {
         private struct Routes
@@ -46,7 +47,6 @@ namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetAsync([FromQuery] int? offset, [FromQuery] int? limit, [FromQuery] string[] sort, [FromQuery] string[] filter, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
 
             var result = await _service.FindWithDetailsAsync(userId, new QueryParams(offset, limit, sort, filter), cancellationToken).ConfigureAwait(false);
@@ -58,7 +58,6 @@ namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetAsync(string id, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
             if (!await _service.IsOwnerAsync(userId, id, cancellationToken).ConfigureAwait(false))
             {
@@ -78,7 +77,6 @@ namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetWithDetailsAsync(string id, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
             if (!await _service.IsOwnerAsync(userId, id, cancellationToken).ConfigureAwait(false))
             {
@@ -98,7 +96,6 @@ namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetTransactionsAsync(string id, [FromQuery] int? offset, [FromQuery] int? limit, [FromQuery] string[] sort, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
             if (!await _service.IsOwnerAsync(userId, id, cancellationToken).ConfigureAwait(false))
             {
@@ -119,7 +116,6 @@ namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> PostAsync([FromBody] AccountDto model, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
 
             if (!ModelState.IsValid)
@@ -139,7 +135,6 @@ namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> PutAsync([FromRoute] string id, [FromBody] AccountDto model, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
             if (!await _service.IsOwnerAsync(userId, id, cancellationToken).ConfigureAwait(false))
             {
@@ -162,7 +157,6 @@ namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> DeleteAsync([FromRoute] string id, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
             if (!await _service.IsOwnerAsync(userId, id, cancellationToken).ConfigureAwait(false))
             {

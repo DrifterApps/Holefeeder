@@ -24,6 +24,7 @@ namespace DrifterApps.Holefeeder.ObjectStore.API.Controllers
 {
     [Authorize]
     [Route("api/v2/[controller]")]
+    [RequiredScope(Scopes.REGISTERED_USER)]
     public class StoreItemsController : ControllerBase
     {
         private struct Routes
@@ -50,7 +51,6 @@ namespace DrifterApps.Holefeeder.ObjectStore.API.Controllers
         public async Task<IActionResult> GetStoreItems([FromQuery] int? offset, [FromQuery] int? limit,
             [FromQuery] string[] sort, [FromQuery] string[] filter, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
 
             var response = await _mediator.Send(new GetStoreItemsQuery(userId, offset, limit, sort, filter),
@@ -65,7 +65,6 @@ namespace DrifterApps.Holefeeder.ObjectStore.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetStoreItem(Guid id, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
 
             if (id == default)
@@ -90,8 +89,6 @@ namespace DrifterApps.Holefeeder.ObjectStore.API.Controllers
         public async Task<IActionResult> CreateStoreItem([FromBody] CreateStoreItemCommand command,
             CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(CommandResult<Guid>.Create(CommandStatus.BadRequest, Guid.Empty,
@@ -118,8 +115,6 @@ namespace DrifterApps.Holefeeder.ObjectStore.API.Controllers
         public async Task<IActionResult> ModifyStoreItem([FromBody] ModifyStoreItemCommand command,
             CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(CommandResult.Create(CommandStatus.BadRequest,

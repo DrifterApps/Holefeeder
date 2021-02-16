@@ -15,6 +15,7 @@ using Microsoft.Identity.Web.Resource;
 namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
 {
     [Route("api/v1/[controller]"), Authorize(Policy = "registered_users")]
+    [RequiredScope(Scopes.REGISTERED_USER)]
     public class TransactionsController : Controller
     {
         private struct Routes
@@ -40,7 +41,6 @@ namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetAsync([FromQuery] int? offset, [FromQuery] int? limit, [FromQuery] string[] sort, [FromQuery] string[] filter, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
 
             var query = new QueryParams(offset, limit, sort, filter);
@@ -57,7 +57,6 @@ namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetAsync([FromRoute] string id, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
             if (!await _service.IsOwnerAsync(userId, id, cancellationToken).ConfigureAwait(false))
             {
@@ -79,7 +78,6 @@ namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> PostAsync([FromBody] TransactionDto model, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
             if (!ModelState.IsValid)
             {
@@ -98,7 +96,6 @@ namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> PutAsync([FromRoute] string id, [FromBody] TransactionDto model, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
             if (!await _service.IsOwnerAsync(userId, id, cancellationToken).ConfigureAwait(false))
             {
@@ -128,7 +125,6 @@ namespace DrifterApps.Holefeeder.Services.BudgetApi.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> DeleteAsync([FromRoute] string id, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
             if (!await _service.IsOwnerAsync(userId, id, cancellationToken).ConfigureAwait(false))
             {

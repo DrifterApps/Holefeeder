@@ -19,6 +19,7 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
 {
     [Authorize]
     [Route("api/v2/[controller]")]
+    [RequiredScope(Scopes.REGISTERED_USER)]
     public class AccountsController : ControllerBase
     {
         private struct Routes
@@ -43,7 +44,6 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
         public async Task<IActionResult> GetAccounts([FromQuery] int? offset, int? limit, string[] sort,
             string[] filter, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
 
             var response = await _mediator.Send(new GetAccountsQuery(userId, offset, limit, sort, filter),
@@ -58,7 +58,6 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetAccounts(Guid id, CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
 
             if (id == default)

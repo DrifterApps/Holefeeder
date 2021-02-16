@@ -16,6 +16,7 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
 {
     [Authorize]
     [Route("api/v2/[controller]")]
+    [RequiredScope(Scopes.REGISTERED_USER)]
     public class CashflowsController : ControllerBase
     {
         private struct Routes
@@ -39,7 +40,6 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
         public async Task<IActionResult> GetUpcoming([FromQuery] DateTime from, [FromQuery] DateTime to,
             CancellationToken cancellationToken = default)
         {
-            HttpContext.VerifyUserHasAnyAcceptedScope(Scopes.ScopeRequiredByApi);
             var userId = User.GetUniqueId();
 
             if (from > to)
