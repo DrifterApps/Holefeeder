@@ -8,6 +8,9 @@ using DrifterApps.Holefeeder.Framework.SeedWork.Application;
 using DrifterApps.Holefeeder.ObjectStore.Application.Models;
 using DrifterApps.Holefeeder.ObjectStore.Domain.BoundedContext.StoreItemContext;
 
+using FluentValidation;
+using FluentValidation.Results;
+
 using MediatR;
 
 using Microsoft.Extensions.Logging;
@@ -35,8 +38,10 @@ namespace DrifterApps.Holefeeder.ObjectStore.Application.Commands
 
             if (await _repository.FindByCodeAsync((Guid)_cache["UserId"], request.Code, cancellationToken) != null)
             {
-                return new CommandResult<Guid>(CommandStatus.BadRequest, Guid.Empty,
-                    ImmutableArray.Create($"Code '{request.Code}' already exists."));
+                throw new ValidationException(new[]
+                {
+                    new ValidationFailure(nameof(request.Code), $"Code '{request.Code}' already exists.")
+                });
             }
 
             var storeItem = StoreItem.Create(request.Code, request.Data, (Guid)_cache["UserId"]);
