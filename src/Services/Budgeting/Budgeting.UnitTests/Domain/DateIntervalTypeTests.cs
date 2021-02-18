@@ -106,6 +106,41 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Domain
                 yield return new object[] { new DateTime(2014, 1, 9), new DateTime(2015, 4, 7), DateIntervalType.Yearly, 1, (From: new DateTime(2015, 1, 9), To: new DateTime(2016, 1, 8)) };
             }
         }
+        
+        [Theory, MemberData(nameof(DatesInRangeTestCases))]
+        public void GivenDatesInRange_WhenValidDateTime_ThenListOfDatesInRange(DateIntervalType intervalType, int frequency, DateTime effective, DateTime from, DateTime to, DateTime[] expected)
+        {
+            _ = intervalType.ThrowIfNull(nameof(intervalType));
 
+            intervalType.DatesInRange(effective, from, to, frequency).Should().Equal(expected);
+        }
+
+        public static IEnumerable<object[]> DatesInRangeTestCases
+        {
+            get
+            {
+                yield return new object[] { DateIntervalType.OneTime, 1, new DateTime(2014, 2, 2), new DateTime(2014, 1, 1), new DateTime(2014, 3, 1), new []{new DateTime(2014, 2, 2)} };
+                yield return new object[] { DateIntervalType.OneTime, 1, new DateTime(2014, 2, 2), new DateTime(2014, 2, 2), new DateTime(2014, 2, 2), new []{new DateTime(2014, 2, 2)} };
+                yield return new object[] { DateIntervalType.OneTime, 1, new DateTime(2014, 2, 2), new DateTime(2014, 2, 2), new DateTime(2014, 3, 1), new []{new DateTime(2014, 2, 2)} };
+                yield return new object[] { DateIntervalType.OneTime, 1, new DateTime(2014, 2, 2), new DateTime(2014, 1, 1), new DateTime(2014, 2, 2), new []{new DateTime(2014, 2, 2)} };
+                yield return new object[] { DateIntervalType.OneTime, 1, new DateTime(2014, 2, 2), new DateTime(2014, 1, 1), new DateTime(2014, 1, 1), Array.Empty<DateTime>() };
+                yield return new object[] { DateIntervalType.OneTime, 1, new DateTime(2014, 2, 2), new DateTime(2014, 3, 1), new DateTime(2014, 4, 1), Array.Empty<DateTime>() };
+                yield return new object[] { DateIntervalType.Weekly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 1, 1), new DateTime(2014, 3, 1), new []{new DateTime(2014, 2, 2), new DateTime(2014, 2, 9), new DateTime(2014, 2, 16), new DateTime(2014, 2, 23)} };
+                yield return new object[] { DateIntervalType.Weekly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 2, 2), new DateTime(2014, 2, 2), new []{new DateTime(2014, 2, 2)} };
+                yield return new object[] { DateIntervalType.Weekly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 2, 2), new DateTime(2014, 3, 1), new []{new DateTime(2014, 2, 2), new DateTime(2014, 2, 9), new DateTime(2014, 2, 16), new DateTime(2014, 2, 23)} };
+                yield return new object[] { DateIntervalType.Weekly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 1, 1), new DateTime(2014, 2, 2), new []{new DateTime(2014, 2, 2)} };
+                yield return new object[] { DateIntervalType.Weekly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 1, 1), new DateTime(2014, 2, 1), Array.Empty<DateTime>() };
+                yield return new object[] { DateIntervalType.Monthly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 1, 1), new DateTime(2014, 4, 1), new []{new DateTime(2014, 2, 2), new DateTime(2014, 3, 2)} };
+                yield return new object[] { DateIntervalType.Monthly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 2, 2), new DateTime(2014, 2, 2), new []{new DateTime(2014, 2, 2)} };
+                yield return new object[] { DateIntervalType.Monthly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 2, 2), new DateTime(2014, 4, 1), new []{new DateTime(2014, 2, 2), new DateTime(2014, 3, 2)} };
+                yield return new object[] { DateIntervalType.Monthly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 1, 1), new DateTime(2014, 2, 2), new []{new DateTime(2014, 2, 2)} };
+                yield return new object[] { DateIntervalType.Monthly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 1, 1), new DateTime(2014, 2, 1), Array.Empty<DateTime>() };
+                yield return new object[] { DateIntervalType.Yearly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 1, 1), new DateTime(2016, 4, 1), new []{new DateTime(2014, 2, 2), new DateTime(2015, 2, 2), new DateTime(2016, 2, 2)} };
+                yield return new object[] { DateIntervalType.Yearly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 2, 2), new DateTime(2014, 2, 2), new []{new DateTime(2014, 2, 2)} };
+                yield return new object[] { DateIntervalType.Yearly, 1, new DateTime(2014, 2, 2), new DateTime(2014, 2, 2), new DateTime(2016, 4, 1), new []{new DateTime(2014, 2, 2), new DateTime(2015, 2, 2), new DateTime(2016, 2, 2)} };
+                yield return new object[] { DateIntervalType.Yearly, 1, new DateTime(2014, 2, 2), new DateTime(2013, 1, 1), new DateTime(2014, 2, 2), new []{new DateTime(2014, 2, 2)} };
+                yield return new object[] { DateIntervalType.Yearly, 1, new DateTime(2014, 2, 2), new DateTime(2013, 1, 1), new DateTime(2014, 2, 1), Array.Empty<DateTime>() };
+            }
+        }
     }
 }

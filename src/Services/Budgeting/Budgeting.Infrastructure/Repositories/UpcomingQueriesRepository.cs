@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using DrifterApps.Holefeeder.Budgeting.Application.Contracts;
 using DrifterApps.Holefeeder.Budgeting.Application.Models;
 using DrifterApps.Holefeeder.Budgeting.Infrastructure.Context;
+
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -17,7 +19,8 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
         {
         }
 
-        public async Task<IEnumerable<UpcomingViewModel>> GetUpcomingAsync(Guid userId, DateTime startDate, DateTime endDate,
+        public async Task<IEnumerable<UpcomingViewModel>> GetUpcomingAsync(Guid userId, DateTime startDate,
+            DateTime endDate,
             CancellationToken cancellationToken = default)
         {
             var transactionCollection = await DbContext.GetTransactionsAsync(cancellationToken);
@@ -74,30 +77,27 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
                 {
                     var dates = new List<DateTime>();
 
-                    var nextDate =
-                        x.Cashflow.IntervalType.NextDate(x.Cashflow.EffectiveDate, startDate, x.Cashflow.Frequency);
-                    if (IsUnpaid(x.Cashflow.EffectiveDate, nextDate, x.LastPaidDate, x.LastCashflowDate))
-                    {
-                        dates.Add(nextDate);
-                    }
+                    dates.AddRange(x.Cashflow.IntervalType
+                        .DatesInRange(x.Cashflow.EffectiveDate, startDate, endDate, x.Cashflow.Frequency)
+                        .Where(futureDate =>
+                            IsUnpaid(x.Cashflow.EffectiveDate, futureDate, x.LastPaidDate, x.LastCashflowDate)));
 
-                    var date = nextDate;
+                    var date = x.Cashflow.IntervalType.PreviousDate(x.Cashflow.EffectiveDate, startDate,
+                        x.Cashflow.Frequency);
                     while (IsUnpaid(x.Cashflow.EffectiveDate, date, x.LastPaidDate, x.LastCashflowDate) &&
                            date > x.Cashflow.EffectiveDate)
                     {
+                        dates.Add(date);
                         date = x.Cashflow.IntervalType.PreviousDate(x.Cashflow.EffectiveDate, date,
                             x.Cashflow.Frequency);
-                        if (IsUnpaid(x.Cashflow.EffectiveDate, date, x.LastPaidDate, x.LastCashflowDate))
-                        {
-                            dates.Add(date);
-                        }
                     }
 
                     return dates.Select(d =>
                         new UpcomingViewModel(x.Cashflow.Id, d, x.Cashflow.Amount, x.Cashflow.Description,
                             new CategoryInfoViewModel(x.Category.Id, x.Category.Name, x.Category.Type,
                                 x.Category.Color),
-                            new AccountInfoViewModel(x.Account.Id, x.Account.Name, x.Account.MongoId), x.Cashflow.Tags));
+                            new AccountInfoViewModel(x.Account.Id, x.Account.Name, x.Account.MongoId),
+                            x.Cashflow.Tags));
                 }).Where(x => x.Date <= endDate)
                 .OrderBy(x => x.Date);
 

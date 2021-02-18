@@ -7,7 +7,6 @@ using DrifterApps.Holefeeder.Budgeting.API;
 using DrifterApps.Holefeeder.Budgeting.Application.Converters;
 using DrifterApps.Holefeeder.Budgeting.Application.Models;
 using DrifterApps.Holefeeder.Budgeting.Domain.Enumerations;
-using DrifterApps.Holefeeder.Framework.SeedWork.Infrastructure;
 
 using FluentAssertions;
 
@@ -19,56 +18,57 @@ using Xunit;
 
 namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Scenarios
 {
-    public class AccountQueriesScenarios : IClassFixture<BudgetingWebApplicationFactory>
+    public class AccountScenarios : IClassFixture<BudgetingWebApplicationFactory>
     {
         private readonly WebApplicationFactory<Startup> _factory;
 
-        private readonly JsonSerializerOptions _jsonSerializerOptions = new() {PropertyNameCaseInsensitive = true,};
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public AccountQueriesScenarios(BudgetingWebApplicationFactory factory)
+        public AccountScenarios(BudgetingWebApplicationFactory factory)
         {
             _factory = factory;
+
+            _jsonSerializerOptions = new JsonSerializerOptions {PropertyNameCaseInsensitive = true};
+            _jsonSerializerOptions.Converters.Add(new AccountTypeConverter());
+            _jsonSerializerOptions.Converters.Add(new CategoryTypeConverter());
         }
 
         [Scenario]
-        public void GivenGetAccounts_WhenNoFilter_ThenReturnResultsForUser(HttpClient client,
+        public void GivenGetAccounts(HttpClient client,
             HttpResponseMessage response)
         {
-            "Given getting accounts"
-                .x(() => client = _factory.CreateClient());
+            "Given GetAccount query"
+                .x(() => client = _factory.CreateDefaultClient());
 
-            "For user TestUser #1"
-                .x(() => client.DefaultRequestHeaders.Add(TestAuthHandler.TEST_USER_ID_HEADER,
-                    BudgetingContextSeed.TestUserGuid1.ToString()));
-
-            "When I get call the API"
+            "When I call the API"
                 .x(async () =>
                 {
-                    string request = $"/api/v2/accounts/get-accounts";
+                    const string request = "/api/v2/accounts/get-accounts";
 
-                    // Act
                     response = await client.GetAsync(request);
                 });
 
             "Then the status code should indicate success"
-                .x(() => response.StatusCodeShouldBeSuccess());
+                .x(() => response.Should()
+                    .NotBeNull()
+                    .And.BeOfType<HttpResponseMessage>()
+                    .Which.IsSuccessStatusCode.Should().BeTrue());
 
             "And the result contain the accounts of the user"
                 .x(async () =>
                 {
-                    var jsonOptions = new JsonSerializerOptions {PropertyNameCaseInsensitive = true};
-                    jsonOptions.Converters.Add(new AccountTypeConverter());
-                    jsonOptions.Converters.Add(new CategoryTypeConverter());
-                    var result = await response.Content.ReadFromJsonAsync<AccountViewModel[]>(jsonOptions);
+                    var result = await response.Content.ReadFromJsonAsync<AccountViewModel[]>(_jsonSerializerOptions);
 
-                    result.Should().BeEquivalentTo(
-                        new AccountViewModel(BudgetingContextSeed.AccountGuid1, AccountType.Checking, "Account1", 7,
-                            100.01m, new DateTime(2020, 1, 8), "Description1", false),
-                        new AccountViewModel(BudgetingContextSeed.AccountGuid2, AccountType.CreditCard, "Account2", 0,
-                            200.02m, new DateTime(2019, 1, 3), "Description2", true),
-                        new AccountViewModel(BudgetingContextSeed.AccountGuid3, AccountType.Loan, "Account3", 0,
-                            300.03m, new DateTime(2019, 1, 4), "Description3", false)
-                    );
+                    result.Should()
+                        .NotBeEmpty()
+                        .And.HaveCount(3)
+                        .And.BeEquivalentTo(
+                            new AccountViewModel(BudgetingContextSeed.Account1.Id, AccountType.Checking, "Account1", 6,
+                                19.01m, new DateTime(2020, 1, 7), "Description1", false),
+                            new AccountViewModel(BudgetingContextSeed.Account2.Id, AccountType.CreditCard, "Account2",
+                                0, 200.02m, new DateTime(2019, 1, 3), "Description2", true),
+                            new AccountViewModel(BudgetingContextSeed.Account3.Id, AccountType.Loan, "Account3", 0,
+                                300.03m, new DateTime(2019, 1, 4), "Description3", false));
                 });
         }
 
@@ -80,7 +80,7 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Scenarios
                 .x(() =>
                 {
                     client = _factory.CreateClient();
-                    accountId = BudgetingContextSeed.AccountGuid2;
+                    accountId = BudgetingContextSeed.Account2.Id;
                 });
 
             "For user TestUser #1"
@@ -97,7 +97,10 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Scenarios
                 });
 
             "Then the status code should indicate success"
-                .x(() => response.StatusCodeShouldBeSuccess());
+                .x(() => response.Should()
+                    .NotBeNull()
+                    .And.BeOfType<HttpResponseMessage>()
+                    .Which.IsSuccessStatusCode.Should().BeTrue());
 
             "And the result contain the accounts of the user"
                 .x(async () =>
@@ -108,7 +111,7 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Scenarios
                     var result = await response.Content.ReadFromJsonAsync<AccountViewModel>(jsonOptions);
 
                     result.Should().BeEquivalentTo(
-                        new AccountViewModel(BudgetingContextSeed.AccountGuid2, AccountType.CreditCard, "Account2", 0,
+                        new AccountViewModel(BudgetingContextSeed.Account2.Id, AccountType.CreditCard, "Account2", 0,
                             200.02m, new DateTime(2019, 1, 3), "Description2", true)
                     );
                 });

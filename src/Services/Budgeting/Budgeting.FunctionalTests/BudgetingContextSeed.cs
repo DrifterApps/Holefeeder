@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using DrifterApps.Holefeeder.Budgeting.Domain.Enumerations;
+using DrifterApps.Holefeeder.Budgeting.FunctionalTests.Builders;
 using DrifterApps.Holefeeder.Budgeting.Infrastructure;
 using DrifterApps.Holefeeder.Budgeting.Infrastructure.Schemas;
 using DrifterApps.Holefeeder.Framework.SeedWork;
 
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests
@@ -16,26 +17,26 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests
         public static readonly Guid TestUserGuid1 = Guid.NewGuid();
         public static readonly Guid TestUserGuid2 = Guid.NewGuid();
 
-        public static readonly Guid AccountGuid1 = Guid.NewGuid();
-        public static readonly Guid AccountGuid2 = Guid.NewGuid();
-        public static readonly Guid AccountGuid3 = Guid.NewGuid();
-        public static readonly Guid AccountGuid4 = Guid.NewGuid();
+        public static readonly (Guid Id, ObjectId MongoId) Account1 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Account2 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Account3 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Account4 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
 
-        public static readonly Guid CategoryGuid1 = Guid.NewGuid();
-        public static readonly Guid CategoryGuid2 = Guid.NewGuid();
-        public static readonly Guid CategoryGuid3 = Guid.NewGuid();
+        public static readonly (Guid Id, ObjectId MongoId) Category1 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Category2 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Category3 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
 
-        public static readonly Guid CashflowGuid1 = Guid.NewGuid();
+        public static readonly (Guid Id, ObjectId MongoId) Cashflow1 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
 
-        public static readonly Guid TransactionGuid1 = Guid.NewGuid();
-        public static readonly Guid TransactionGuid2 = Guid.NewGuid();
-        public static readonly Guid TransactionGuid3 = Guid.NewGuid();
-        public static readonly Guid TransactionGuid4 = Guid.NewGuid();
-        public static readonly Guid TransactionGuid5 = Guid.NewGuid();
-        public static readonly Guid TransactionGuid6 = Guid.NewGuid();
-        public static readonly Guid TransactionGuid7 = Guid.NewGuid();
+        public static readonly (Guid Id, ObjectId MongoId) Transaction1 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Transaction2 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Transaction3 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Transaction4 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Transaction5 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Transaction6 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Transaction7 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Transaction8 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
 
-        private static readonly Dictionary<Guid, string> MongoIds = new Dictionary<Guid, string>();
         public static void SeedData(IHolefeederDatabaseSettings settings)
         {
             settings.ThrowIfNull(nameof(settings));
@@ -47,106 +48,41 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests
             var database = client.GetDatabase(settings.Database);
 
             var accounts = database.GetCollection<AccountSchema>(AccountSchema.SCHEMA);
-            CreateAccount(accounts, AccountGuid1, 1, TestUserGuid1, AccountType.Checking, false, false);
-            CreateAccount(accounts, AccountGuid2, 2, TestUserGuid1, AccountType.CreditCard, true, false);
-            CreateAccount(accounts, AccountGuid3, 3, TestUserGuid1, AccountType.Loan, false, true);
-            CreateAccount(accounts, AccountGuid4, 4, TestUserGuid2, AccountType.Checking, false, false);
-            
+            AccountBuilder.Create(Account1).OfType(AccountType.Checking).ForUser(TestUserGuid1).Build();
+            AccountBuilder.Create(Account2).OfType(AccountType.CreditCard).ForUser(TestUserGuid1).IsFavorite().Build();
+            AccountBuilder.Create(Account3).OfType(AccountType.Loan).ForUser(TestUserGuid1).IsInactive().Build();
+            AccountBuilder.Create(Account4).OfType(AccountType.Checking).ForUser(TestUserGuid2).Build();
+            accounts.InsertMany(AccountBuilder.Accounts);
+
             var categories = database.GetCollection<CategorySchema>(CategorySchema.SCHEMA);
-            CreateCategory(categories, CategoryGuid1, 1, TestUserGuid1, CategoryType.Expense, false);
-            CreateCategory(categories, CategoryGuid2, 2, TestUserGuid1, CategoryType.Gain, true);
-            CreateCategory(categories, CategoryGuid3, 3, TestUserGuid2, CategoryType.Expense, false);
-            
+            CategoryBuilder.Create(Category1).OfType(CategoryType.Expense).ForUser(TestUserGuid1).Build();
+            CategoryBuilder.Create(Category2).OfType(CategoryType.Gain).ForUser(TestUserGuid1).IsFavorite().Build();
+            CategoryBuilder.Create(Category3).OfType(CategoryType.Expense).ForUser(TestUserGuid2).Build();
+            categories.InsertMany(CategoryBuilder.Categories);
+
             var cashflows = database.GetCollection<CashflowSchema>(CashflowSchema.SCHEMA);
-            CreateCashflow(cashflows, CashflowGuid1, 1, AccountGuid1, CategoryGuid1, TestUserGuid1, 111, DateIntervalType.Weekly, 2);
+            CashflowBuilder.Create(Cashflow1).OfType(DateIntervalType.Weekly).WithFrequency(2).OfAmount(111)
+                .ForAccount(Account1).ForCategory(Category1).ForUser(TestUserGuid1).Build();
+            cashflows.InsertMany(CashflowBuilder.Cashflows);
 
             var transactions = database.GetCollection<TransactionSchema>(TransactionSchema.SCHEMA);
-            CreateTransaction(transactions, TransactionGuid1, 1, AccountGuid1, CategoryGuid1, TestUserGuid1, 10);
-            CreateTransaction(transactions, TransactionGuid2, 2, AccountGuid1, CategoryGuid1, TestUserGuid1, 20);
-            CreateTransaction(transactions, TransactionGuid3, 3, AccountGuid1, CategoryGuid1, TestUserGuid1, 30);
-            CreateTransaction(transactions, TransactionGuid4, 4, AccountGuid1, CategoryGuid2, TestUserGuid1, 40);
-            CreateTransaction(transactions, TransactionGuid5, 5, AccountGuid1, CategoryGuid2, TestUserGuid1, 50);
-            CreateTransaction(transactions, TransactionGuid6, 6, AccountGuid1, CategoryGuid3, TestUserGuid2, 10);
-            CreateTransaction(transactions, TransactionGuid7, 7, AccountGuid1, CategoryGuid3, TestUserGuid2, 20);
-        }
-
-        private static void CreateAccount(IMongoCollection<AccountSchema> collection, Guid id, int index,
-            Guid userId, AccountType type, bool favorite, bool inactive)
-        {
-            var schema = new AccountSchema
-            {
-                Id = id,
-                Name = $"Account{index}",
-                Description = $"Description{index}",
-                Type = type,
-                UserId = userId,
-                Favorite = favorite,
-                Inactive = inactive,
-                OpenBalance = (Convert.ToDecimal(index) * 100m) + (Convert.ToDecimal(index) / 100m),
-                OpenDate = (new DateTime(2019, 1, 1)).AddDays(index),
-            };
-            
-            collection.InsertOne(schema);
-            
-            MongoIds.Add(id, schema.MongoId);
-        }
-
-        private static void CreateCategory(IMongoCollection<CategorySchema> collection, Guid id, int index,
-            Guid userId, CategoryType type, bool favorite)
-        {
-            var schema = new CategorySchema
-            {
-                Id = id,
-                Name = $"Category{index}",
-                Type = type,
-                UserId = userId,
-                Favorite = favorite,
-            };
-            
-            collection.InsertOne(schema);
-            
-            MongoIds.Add(id, schema.MongoId);
-        }
-
-        private static void CreateCashflow(IMongoCollection<CashflowSchema> collection, Guid id, int index,
-            Guid accountId, Guid categoryId, Guid userId, decimal amount, DateIntervalType intervalType, int frequency)
-        {
-            var schema = new CashflowSchema
-            {
-                Id = id,
-                Amount = amount,
-                EffectiveDate = (new DateTime(2020, 1, 1)).AddDays(index),
-                IntervalType = intervalType,
-                Frequency = frequency,
-                Recurrence = 0,
-                Description = $"Cashflow{index}",
-                Account = MongoIds[accountId],
-                Category = MongoIds[categoryId],
-                UserId = userId
-            };
-            
-            collection.InsertOne(schema);
-            
-            MongoIds.Add(id, schema.MongoId);
-        }
-
-        private static void CreateTransaction(IMongoCollection<TransactionSchema> collection, Guid id, int index,
-            Guid accountId, Guid categoryId, Guid userId, decimal amount)
-        {
-            var schema = new TransactionSchema
-            {
-                Id = id,
-                Amount = amount,
-                Date = (new DateTime(2020, 1, 1)).AddDays(index),
-                Description = $"Transaction{index}",
-                Account = MongoIds[accountId],
-                Category = MongoIds[categoryId],
-                UserId = userId
-            };
-            
-            collection.InsertOne(schema);
-            
-            MongoIds.Add(id, schema.MongoId);
+            TransactionBuilder.Create(Transaction1).OfAmount(10).ForAccount(Account1).ForCategory(Category1)
+                .ForUser(TestUserGuid1).Build();
+            TransactionBuilder.Create(Transaction2).OfAmount(20).ForAccount(Account1).ForCategory(Category1)
+                .ForUser(TestUserGuid1).Build();
+            TransactionBuilder.Create(Transaction3).OfAmount(30).ForAccount(Account1).ForCategory(Category1)
+                .ForUser(TestUserGuid1).Build();
+            TransactionBuilder.Create(Transaction4).OfAmount(40).ForAccount(Account1).ForCategory(Category2)
+                .ForUser(TestUserGuid1).Build();
+            TransactionBuilder.Create(Transaction5).OfAmount(50).ForAccount(Account1).ForCategory(Category2)
+                .ForUser(TestUserGuid1).Build();
+            TransactionBuilder.Create(Transaction6).OfAmount(111).IsCashflow(Cashflow1, new DateTime(2020, 1, 2))
+                .ForAccount(Account1).ForCategory(Category1).ForUser(TestUserGuid1).Build();
+            TransactionBuilder.Create(Transaction7).OfAmount(10).ForAccount(Account4).ForCategory(Category3)
+                .ForUser(TestUserGuid2).Build();
+            TransactionBuilder.Create(Transaction8).OfAmount(20).ForAccount(Account4).ForCategory(Category3)
+                .ForUser(TestUserGuid2).Build();
+            transactions.InsertMany(TransactionBuilder.Transactions);
         }
 
         private static void CleanupData(IMongoClient client, IHolefeederDatabaseSettings settings)
