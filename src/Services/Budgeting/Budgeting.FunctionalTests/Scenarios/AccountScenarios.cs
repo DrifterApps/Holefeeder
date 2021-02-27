@@ -4,11 +4,15 @@ using System.Net.Http.Json;
 using System.Text.Json;
 
 using DrifterApps.Holefeeder.Budgeting.API;
-using DrifterApps.Holefeeder.Budgeting.Application.Converters;
+using DrifterApps.Holefeeder.Budgeting.Application.Commands;
 using DrifterApps.Holefeeder.Budgeting.Application.Models;
 using DrifterApps.Holefeeder.Budgeting.Domain.Enumerations;
+using DrifterApps.Holefeeder.Framework.SeedWork.Application;
+using DrifterApps.Holefeeder.Framework.SeedWork.Converters;
+using DrifterApps.Holefeeder.ObjectStore.Application.Models;
 
 using FluentAssertions;
+using FluentAssertions.Execution;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 
@@ -29,8 +33,6 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Scenarios
             _factory = factory;
 
             _jsonSerializerOptions = new JsonSerializerOptions {PropertyNameCaseInsensitive = true};
-            _jsonSerializerOptions.Converters.Add(new AccountTypeConverter());
-            _jsonSerializerOptions.Converters.Add(new CategoryTypeConverter());
         }
 
         [Scenario]
@@ -105,15 +107,66 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Scenarios
             "And the result contain the accounts of the user"
                 .x(async () =>
                 {
-                    var jsonOptions = new JsonSerializerOptions {PropertyNameCaseInsensitive = true};
-                    jsonOptions.Converters.Add(new AccountTypeConverter());
-                    jsonOptions.Converters.Add(new CategoryTypeConverter());
-                    var result = await response.Content.ReadFromJsonAsync<AccountViewModel>(jsonOptions);
+                    var result = await response.Content.ReadFromJsonAsync<AccountViewModel>(_jsonSerializerOptions);
 
                     result.Should().BeEquivalentTo(
                         new AccountViewModel(BudgetingContextSeed.Account2.Id, AccountType.CreditCard, "Account2", 0,
                             200.02m, new DateTime(2019, 1, 3), "Description2", true)
                     );
+                });
+        }
+
+        [Scenario]
+        public void OpenAccountCommand(HttpClient client, OpenAccountCommand command,
+            HttpResponseMessage response)
+        {
+            "Given OpenAccount command"
+                .x(() => client = _factory.CreateClient());
+
+            "For newly registered test user"
+                .x(() => client.DefaultRequestHeaders.Add(TestAuthHandler.TEST_USER_ID_HEADER,
+                    Guid.NewGuid().ToString()));
+
+            "With valid data"
+                .x(() => command = new OpenAccountCommand
+                {
+                    Type = AccountType.Checking,
+                    Name = "New Account",
+                    OpenBalance = 1234m,
+                    OpenDate = DateTime.Today,
+                    Description = "New account description"
+                });
+
+            "When I call the API"
+                .x(async () =>
+                {
+                    const string requestUri = "/api/v2/accounts/open-account";
+
+                    response = await client.PostAsJsonAsync(requestUri, command);
+                });
+
+            "Then the status code should indicate success"
+                .x(() => response.Should()
+                    .NotBeNull()
+                    .And.BeOfType<HttpResponseMessage>()
+                    .Which.IsSuccessStatusCode.Should().BeTrue());
+
+            "With the header location present"
+                .x(() => response.Headers.Location?.AbsolutePath.Should().StartWithEquivalent("/api/v2/accounts/"));
+
+            "And a CommandResult with created status"
+                .x(async () =>
+                {
+                    using (new AssertionScope())
+                    {
+                        var result =
+                            await response.Content.ReadFromJsonAsync<CommandResult<Guid>>(_jsonSerializerOptions);
+                        result.Should().NotBeNull()
+                            .And.BeEquivalentTo(CommandResult<Guid>.Create(CommandStatus.Created, Guid.Empty),
+                                options => options
+                                    .ComparingByMembers<CommandResult<Guid>>()
+                                    .Using<Guid>(ctx => ctx.Subject.Should().NotBeEmpty()).WhenTypeIs<Guid>());
+                    }
                 });
         }
     }

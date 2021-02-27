@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using DrifterApps.Holefeeder.Budgeting.Application.Models;
+using DrifterApps.Holefeeder.Framework.SeedWork.Application;
+
 using MediatR;
 
 namespace DrifterApps.Holefeeder.Budgeting.Application.Commands

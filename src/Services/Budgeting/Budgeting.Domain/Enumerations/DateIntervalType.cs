@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
+using DrifterApps.Holefeeder.Framework.SeedWork.Converters;
 using DrifterApps.Holefeeder.Framework.SeedWork.Domain;
 
 namespace DrifterApps.Holefeeder.Budgeting.Domain.Enumerations
 {
+    [JsonConverter(typeof(EnumerationJsonConverter<CategoryType>))]
     public abstract class DateIntervalType : Enumeration
     {
         public static readonly DateIntervalType Weekly = new WeeklyDateIntervalType(1, nameof(Weekly));

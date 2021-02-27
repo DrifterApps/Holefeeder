@@ -6,10 +6,11 @@ using DrifterApps.Holefeeder.Framework.SeedWork.Domain;
 
 namespace DrifterApps.Holefeeder.Budgeting.Domain.BoundedContext.AccountContext
 {
-    public interface IAccountRepository : IRepository<AccountContext.Account>
+    public interface IAccountRepository : IRepository<Account>
     {
-        Task<AccountContext.Account> FindByIdAsync(Guid id, CancellationToken cancellationToken);
-        Task CreateAsync(AccountContext.Account account, CancellationToken cancellationToken);
-        Task UpdateAsync(AccountContext.Account account, CancellationToken cancellationToken);
+        Task<Account> FindByIdAsync(Guid id, CancellationToken cancellationToken);
+        Task<Account> FindByNameAsync(string name, Guid userId, CancellationToken cancellationToken);
+        Task CreateAsync(Account account, CancellationToken cancellationToken);
+        Task UpdateAsync(Account account, CancellationToken cancellationToken);
     }
 }

@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+
 using AutoMapper;
+
 using DrifterApps.Holefeeder.Budgeting.Domain.BoundedContext.AccountContext;
 using DrifterApps.Holefeeder.Budgeting.Infrastructure.Context;
 using DrifterApps.Holefeeder.Budgeting.Infrastructure.Schemas;
@@ -12,6 +14,7 @@ using DrifterApps.Holefeeder.Framework.SeedWork.Application;
 using DrifterApps.Holefeeder.Framework.SeedWork.Domain;
 
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
 {
@@ -21,7 +24,6 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
         private readonly IMongoDbContext _mongoDbContext;
         private readonly IMapper _mapper;
 
-        
         public AccountRepository(IUnitOfWork unitOfWork, IMongoDbContext mongoDbContext, IMapper mapper)
         {
             UnitOfWork = unitOfWork.ThrowIfNull(nameof(mapper));
@@ -29,10 +31,11 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
             _mapper = mapper.ThrowIfNull(nameof(mapper));
         }
 
-        public async Task<IEnumerable<Account>> FindAsync(QueryParams queryParams, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Account>> FindAsync(QueryParams queryParams,
+            CancellationToken cancellationToken = default)
         {
             queryParams.ThrowIfNull(nameof(queryParams));
-            
+
             var collection = await _mongoDbContext.GetAccountsAsync(cancellationToken);
 
             var accounts = await collection
@@ -42,13 +45,26 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
                 .Offset(queryParams.Offset)
                 .Limit(queryParams.Limit)
                 .ToListAsync(cancellationToken);
-            
+
             return _mapper.Map<IEnumerable<Account>>(accounts);
         }
 
         public Task<Account> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Account> FindByNameAsync(string name, Guid userId,
+            CancellationToken cancellationToken = default)
+        {
+            var collection = await _mongoDbContext.GetAccountsAsync(cancellationToken);
+
+            var schema = await collection.AsQueryable()
+                .FirstOrDefaultAsync(
+                    x => x.Name.ToLowerInvariant() == name.ToLowerInvariant() && x.UserId == userId,
+                    cancellationToken);
+
+            return _mapper.Map<Account>(schema);
         }
 
         public async Task CreateAsync(Account account, CancellationToken cancellationToken = default)

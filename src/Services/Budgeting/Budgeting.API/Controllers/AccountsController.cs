@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
 using DrifterApps.Holefeeder.Budgeting.API.Authorization;
+using DrifterApps.Holefeeder.Budgeting.Application.Commands;
 using DrifterApps.Holefeeder.Budgeting.Application.Models;
 using DrifterApps.Holefeeder.Budgeting.Application.Queries;
 using DrifterApps.Holefeeder.Framework.SeedWork;
+using DrifterApps.Holefeeder.Framework.SeedWork.Application;
+using DrifterApps.Holefeeder.ObjectStore.Application.Models;
+
+using FluentValidation;
 
 using MediatR;
 
@@ -26,6 +32,7 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
         {
             public const string GET_ACCOUNTS = "get-accounts";
             public const string GET_ACCOUNT = "get-account";
+            public const string OPEN_ACCOUNT = "open-account";
         }
 
         private readonly IMediator _mediator;
@@ -73,6 +80,37 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
             }
 
             return Ok(response);
+        }
+
+        [HttpPost(Routes.OPEN_ACCOUNT, Name = Routes.OPEN_ACCOUNT)]
+        [ProducesResponseType(typeof(CommandResult<Guid>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> OpenAccountCommand([FromBody] OpenAccountCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(CommandResult<Guid>.Create(CommandStatus.BadRequest, Guid.Empty,
+                    ModelState.Values.Select(x => x.ToString())));
+            }
+
+            try
+            {
+                var result = await _mediator.Send(command, cancellationToken);
+
+                if (result.Status != CommandStatus.Created)
+                {
+                    return BadRequest(result);
+                }
+
+                return CreatedAtRoute(Routes.GET_ACCOUNT, new {id = result.Result}, result);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(CommandResult<Guid>.Create(CommandStatus.BadRequest, Guid.Empty,
+                    ex.Errors.Select(e => e.ToString())));
+            }
         }
     }
 }

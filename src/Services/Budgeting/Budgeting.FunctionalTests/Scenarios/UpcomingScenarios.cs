@@ -4,7 +4,6 @@ using System.Net.Http.Json;
 using System.Text.Json;
 
 using DrifterApps.Holefeeder.Budgeting.API;
-using DrifterApps.Holefeeder.Budgeting.Application.Converters;
 using DrifterApps.Holefeeder.Budgeting.Application.Models;
 using DrifterApps.Holefeeder.Budgeting.Domain.Enumerations;
 using DrifterApps.Holefeeder.Budgeting.Domain.Extensions;
@@ -30,7 +29,6 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Scenarios
             _factory = factory;
 
             _jsonSerializerOptions = new JsonSerializerOptions {PropertyNameCaseInsensitive = true};
-            _jsonSerializerOptions.Converters.Add(new CategoryTypeConverter());
         }
 
         [Scenario]

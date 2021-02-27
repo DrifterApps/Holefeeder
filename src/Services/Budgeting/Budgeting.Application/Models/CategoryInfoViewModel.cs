@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 
 using DrifterApps.Holefeeder.Budgeting.Domain.Enumerations;
+using DrifterApps.Holefeeder.Framework.SeedWork.Converters;
 
 namespace DrifterApps.Holefeeder.Budgeting.Application.Models
 {

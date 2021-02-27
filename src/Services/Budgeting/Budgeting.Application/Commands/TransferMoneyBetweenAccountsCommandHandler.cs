@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DrifterApps.Holefeeder.Budgeting.Application.Models;
+
 using DrifterApps.Holefeeder.Budgeting.Domain.BoundedContext.TransactionContext;
 using DrifterApps.Holefeeder.Framework.SeedWork;
+using DrifterApps.Holefeeder.Framework.SeedWork.Application;
+using DrifterApps.Holefeeder.ObjectStore.Application.Models;
+
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -47,7 +50,7 @@ namespace DrifterApps.Holefeeder.Budgeting.Application.Commands
 
             await _transactionRepository.UnitOfWork.CommitAsync(cancellationToken);
 
-            return errors.Any() ? new CommandResult<Guid>(CommandStatus.BadRequest, Guid.Empty) : new CommandResult<Guid>(CommandStatus.Created, transaction.Id);
+            return errors.Any() ? CommandResult<Guid>.Create(CommandStatus.BadRequest, Guid.Empty) : CommandResult<Guid>.Create(CommandStatus.Created, transaction.Id);
         }
     }
 }

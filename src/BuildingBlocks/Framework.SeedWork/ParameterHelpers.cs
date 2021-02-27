@@ -18,5 +18,19 @@ namespace DrifterApps.Holefeeder.Framework.SeedWork
         {
             return string.IsNullOrWhiteSpace(self) ? throw new ArgumentNullException(parameterName) : self;
         }
+
+        public static Guid ThrowIfDefaultOrEmpty(this Guid self, string parameterName)
+        {
+            return self.Equals(default) || self.Equals(Guid.Empty)
+                ? throw new ArgumentNullException(parameterName)
+                : self;
+        }
+
+        public static DateTime ThrowIfDefaultOrEmpty(this DateTime self, string parameterName)
+        {
+            return self.Equals(default) || self.Equals(DateTime.MinValue)
+                ? throw new ArgumentNullException(parameterName)
+                : self;
+        }
     }
 }
