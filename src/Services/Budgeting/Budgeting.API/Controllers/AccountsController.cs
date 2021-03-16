@@ -33,6 +33,9 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
             public const string GET_ACCOUNTS = "get-accounts";
             public const string GET_ACCOUNT = "get-account";
             public const string OPEN_ACCOUNT = "open-account";
+            public const string CLOSE_ACCOUNT = "close-account";
+            public const string FAVORITE_ACCOUNT = "favorite-account";
+            public const string MODIFY_ACCOUNT = "modify-account";
         }
 
         private readonly IMediator _mediator;
@@ -51,9 +54,7 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
         public async Task<IActionResult> GetAccounts([FromQuery] int? offset, int? limit, string[] sort,
             string[] filter, CancellationToken cancellationToken = default)
         {
-            var userId = User.GetUniqueId();
-
-            var response = await _mediator.Send(new GetAccountsQuery(userId, offset, limit, sort, filter),
+            var response = await _mediator.Send(new GetAccountsQuery(offset, limit, sort, filter),
                 cancellationToken);
 
             return Ok(response);
@@ -63,22 +64,14 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
         [ProducesResponseType(typeof(AccountViewModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        public async Task<IActionResult> GetAccounts(Guid id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetAccount(Guid id, CancellationToken cancellationToken = default)
         {
-            var userId = User.GetUniqueId();
-
-            if (id == default)
-            {
-                return BadRequest();
-            }
-
-            var response = await _mediator.Send(new GetAccountQuery(userId, id), cancellationToken);
+            var response = await _mediator.Send(new GetAccountQuery(id), cancellationToken);
 
             if (response is null)
             {
                 return NotFound();
-            }
-
+            } 
             return Ok(response);
         }
 
@@ -109,6 +102,93 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
             catch (ValidationException ex)
             {
                 return BadRequest(CommandResult<Guid>.Create(CommandStatus.BadRequest, Guid.Empty,
+                    ex.Errors.Select(e => e.ToString())));
+            }
+        }
+
+        [HttpPut(Routes.CLOSE_ACCOUNT, Name = Routes.CLOSE_ACCOUNT)]
+        [ProducesResponseType(typeof(CommandResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> CloseAccountCommand([FromBody] CloseAccountCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(CommandResult.Create(CommandStatus.BadRequest,
+                    ModelState.Values.Select(x => x.ToString())));
+            }
+
+            try
+            {
+                var result = await _mediator.Send(command, cancellationToken);
+
+                if (result.Status != CommandStatus.Ok)
+                {
+                    return BadRequest(result);
+                }
+
+                return Ok(result);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(CommandResult.Create(CommandStatus.BadRequest,
+                    ex.Errors.Select(e => e.ToString())));
+            }
+        }
+
+        [HttpPut(Routes.FAVORITE_ACCOUNT, Name = Routes.FAVORITE_ACCOUNT)]
+        [ProducesResponseType(typeof(CommandResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> FavoriteAccountCommand([FromBody] FavoriteAccountCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(CommandResult.Create(CommandStatus.BadRequest,
+                    ModelState.Values.Select(x => x.ToString())));
+            }
+
+            try
+            {
+                var result = await _mediator.Send(command, cancellationToken);
+
+                if (result.Status != CommandStatus.Ok)
+                {
+                    return BadRequest(result);
+                }
+
+                return Ok(result);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(CommandResult.Create(CommandStatus.BadRequest,
+                    ex.Errors.Select(e => e.ToString())));
+            }
+        }
+
+        [HttpPut(Routes.MODIFY_ACCOUNT, Name = Routes.MODIFY_ACCOUNT)]
+        [ProducesResponseType(typeof(CommandResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> ModifyAccountCommand([FromBody] ModifyAccountCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var result = await _mediator.Send(command, cancellationToken);
+
+                if (result.Status != CommandStatus.Ok)
+                {
+                    return BadRequest(result);
+                }
+
+                return Ok(result);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(CommandResult.Create(CommandStatus.BadRequest,
                     ex.Errors.Select(e => e.ToString())));
             }
         }

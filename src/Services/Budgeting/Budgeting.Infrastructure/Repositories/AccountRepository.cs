@@ -31,27 +31,33 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
             _mapper = mapper.ThrowIfNull(nameof(mapper));
         }
 
-        public async Task<IEnumerable<Account>> FindAsync(QueryParams queryParams,
-            CancellationToken cancellationToken = default)
+        public async Task<Account> FindByIdAsync(Guid id, Guid userId, CancellationToken cancellationToken = default)
         {
-            queryParams.ThrowIfNull(nameof(queryParams));
-
             var collection = await _mongoDbContext.GetAccountsAsync(cancellationToken);
 
-            var accounts = await collection
-                .AsQueryable()
-                .Filter(queryParams.Filter)
-                .Sort(queryParams.Sort)
-                .Offset(queryParams.Offset)
-                .Limit(queryParams.Limit)
-                .ToListAsync(cancellationToken);
+            var schema = await collection.AsQueryable()
+                .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId, cancellationToken);
 
-            return _mapper.Map<IEnumerable<Account>>(accounts);
-        }
+            var cashflowsCollection = await _mongoDbContext.GetCashflowsAsync(cancellationToken);
 
-        public Task<Account> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
+            var schemaId = schema.MongoId;
+            var cashflows = await cashflowsCollection.AsQueryable()
+                .Where(x => x.Account == schemaId).Select(x => x.Id).ToListAsync(cancellationToken);
+
+            var entity = new Account
+            {
+                Id = schema.Id,
+                Type=schema.Type,
+                Name=schema.Name,
+                Favorite = schema.Favorite,
+                OpenBalance = schema.OpenBalance,
+                OpenDate = schema.OpenDate,
+                Description = schema.Description,
+                Inactive = schema.Inactive,
+                UserId = schema.UserId,
+                Cashflows = cashflows
+            };
+            return entity;
         }
 
         public async Task<Account> FindByNameAsync(string name, Guid userId,
@@ -67,22 +73,25 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
             return _mapper.Map<Account>(schema);
         }
 
-        public async Task CreateAsync(Account account, CancellationToken cancellationToken = default)
+        public async Task SaveAsync(Account entity, CancellationToken cancellationToken = default)
         {
-            var schema = _mapper.Map<AccountSchema>(account);
-
             var collection = await _mongoDbContext.GetAccountsAsync(cancellationToken);
+
+            var id = entity.Id;
+            var userId = entity.UserId;
+
+            var schema = await collection.AsQueryable().SingleOrDefaultAsync(x => x.Id == id && x.UserId == userId,
+                cancellationToken: cancellationToken);
+
+            schema = schema == null ? _mapper.Map<AccountSchema>(entity) : _mapper.Map(entity, schema);
 
             _mongoDbContext.AddCommand(async () =>
             {
-                await collection.InsertOneAsync(schema, new InsertOneOptions {BypassDocumentValidation = false},
+                await collection.ReplaceOneAsync(x => x.Id == schema.Id,
+                    schema,
+                    new ReplaceOptions {IsUpsert = true},
                     cancellationToken);
             });
-        }
-
-        public Task UpdateAsync(Account account, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
         }
     }
 }

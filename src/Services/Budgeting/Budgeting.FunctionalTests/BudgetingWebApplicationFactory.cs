@@ -3,10 +3,12 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
+using System.Threading.Tasks;
 
 using DrifterApps.Holefeeder.Budgeting.API;
 using DrifterApps.Holefeeder.Budgeting.Infrastructure;
 using DrifterApps.Holefeeder.Budgeting.Infrastructure.Context;
+using DrifterApps.Holefeeder.Budgeting.Infrastructure.Schemas;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +16,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+using MongoDB.Driver;
 
 namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests
 {
@@ -95,6 +99,18 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests
             } while (directoryInfo.Parent != null);
 
             throw new Exception($"Project root could not be located using the application root {applicationBasePath}.");
+        }
+
+        public async Task SeedAccountData(Func<IMongoCollection<AccountSchema>, AccountSchema> predicate)
+        {
+            var context = this.Services.GetService<IMongoDbContext>() ??
+                          throw new ArgumentNullException($"Unable to get IMongoDbContext");
+
+            var coll = await context.GetAccountsAsync();
+            
+            var schema = predicate(coll);
+            
+            await coll.InsertOneAsync(schema);
         }
     }
 }

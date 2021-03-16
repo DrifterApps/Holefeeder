@@ -8,7 +8,6 @@ using DrifterApps.Holefeeder.Budgeting.Application.Contracts;
 using DrifterApps.Holefeeder.Budgeting.Application.Queries;
 using DrifterApps.Holefeeder.Budgeting.Infrastructure;
 using DrifterApps.Holefeeder.Framework.SeedWork.Converters;
-using DrifterApps.Holefeeder.ObjectStore.Application.Behaviors;
 
 using HealthChecks.UI.Client;
 

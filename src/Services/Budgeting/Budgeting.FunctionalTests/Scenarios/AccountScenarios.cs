@@ -7,6 +7,7 @@ using DrifterApps.Holefeeder.Budgeting.API;
 using DrifterApps.Holefeeder.Budgeting.Application.Commands;
 using DrifterApps.Holefeeder.Budgeting.Application.Models;
 using DrifterApps.Holefeeder.Budgeting.Domain.Enumerations;
+using DrifterApps.Holefeeder.Budgeting.FunctionalTests.Builders;
 using DrifterApps.Holefeeder.Framework.SeedWork.Application;
 using DrifterApps.Holefeeder.Framework.SeedWork.Converters;
 using DrifterApps.Holefeeder.ObjectStore.Application.Models;
@@ -14,7 +15,10 @@ using DrifterApps.Holefeeder.ObjectStore.Application.Models;
 using FluentAssertions;
 using FluentAssertions.Execution;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
+
+using MongoDB.Bson;
 
 using Xbehave;
 
@@ -24,7 +28,7 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Scenarios
 {
     public class AccountScenarios : IClassFixture<BudgetingWebApplicationFactory>
     {
-        private readonly WebApplicationFactory<Startup> _factory;
+        private readonly BudgetingWebApplicationFactory _factory;
 
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
@@ -168,6 +172,132 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Scenarios
                                     .Using<Guid>(ctx => ctx.Subject.Should().NotBeEmpty()).WhenTypeIs<Guid>());
                     }
                 });
+        }
+
+        [Scenario]
+        public void CloseAccountCommand(HttpClient client, CloseAccountCommand command,
+            HttpResponseMessage response)
+        {
+            "Given CloseAccount command"
+                .x(() => client = _factory.CreateClient());
+
+            "For newly registered test user"
+                .x(() => client.DefaultRequestHeaders.Add(TestAuthHandler.TEST_USER_ID_HEADER,
+                    BudgetingContextSeed.TestUserForCommands.ToString()));
+
+            "On Open Account with no cashflows"
+                .x(() => command = new CloseAccountCommand {Id = BudgetingContextSeed.OpenAccountNoCashflows.Id});
+
+            "When I call the API"
+                .x(async () =>
+                {
+                    const string requestUri = "/api/v2/accounts/close-account";
+
+                    response = await client.PutAsJsonAsync(requestUri, command);
+                });
+
+            "Then the status code should indicate success"
+                .x(() => response.Should()
+                    .NotBeNull()
+                    .And.BeOfType<HttpResponseMessage>()
+                    .Which.IsSuccessStatusCode.Should().BeTrue());
+
+            "And a CommandResult with ok status"
+                .x(async () =>
+                {
+                    using (new AssertionScope())
+                    {
+                        var result =
+                            await response.Content.ReadFromJsonAsync<CommandResult>(_jsonSerializerOptions);
+                        result.Should().NotBeNull()
+                            .And.BeEquivalentTo(CommandResult.Create(CommandStatus.Ok),
+                                options => options.ComparingByMembers<CommandResult>());
+                    }
+                });
+        }
+
+        [Scenario]
+        public void CloseAccountCommand_WithActiveCashflows(HttpClient client, CloseAccountCommand command,
+            HttpResponseMessage response)
+        {
+            "Given CloseAccount command"
+                .x(() => client = _factory.CreateClient());
+
+            "For newly registered test user"
+                .x(() => client.DefaultRequestHeaders.Add(TestAuthHandler.TEST_USER_ID_HEADER,
+                    BudgetingContextSeed.TestUserForCommands.ToString()));
+
+            "On Open Account with cashflows"
+                .x(() => command = new CloseAccountCommand {Id = BudgetingContextSeed.OpenAccountWithCashflows.Id});
+
+            "When I call the API"
+                .x(async () =>
+                {
+                    const string requestUri = "/api/v2/accounts/close-account";
+
+                    response = await client.PutAsJsonAsync(requestUri, command);
+                });
+
+            "Then the status code should not indicate success"
+                .x(() => response.Should()
+                    .NotBeNull()
+                    .And.BeOfType<HttpResponseMessage>()
+                    .Which.StatusCode.Should().Be(StatusCodes.Status400BadRequest));
+
+            "And a CommandResult with conflict status"
+                .x(async () =>
+                {
+                    using (new AssertionScope())
+                    {
+                        var result =
+                            await response.Content.ReadFromJsonAsync<CommandResult>(_jsonSerializerOptions);
+                        result.Should().NotBeNull()
+                            .And.BeEquivalentTo(
+                                CommandResult.Create(CommandStatus.Conflict, "Account has active cashflows"),
+                                options => options.ComparingByMembers<CommandResult>());
+                    }
+                });
+        }
+
+        [Scenario]
+        public void FavoriteAccountCommand_WithActiveCashflows(
+            HttpClient client,
+            FavoriteAccountCommand command,
+            HttpResponseMessage response)
+        {
+            "Given FavoriteAccount command"
+                .x(() =>
+                {
+                    client = _factory.CreateClient();
+                    client.DefaultRequestHeaders.Add(
+                        TestAuthHandler.TEST_USER_ID_HEADER,
+                        BudgetingContextSeed.TestUserForCommands.ToString());
+                    command = new FavoriteAccountCommand {Id = Guid.NewGuid(), IsFavorite = true};
+                });
+
+            "On Open Account"
+                .x(async () =>
+                {
+                    await _factory.SeedAccountData(collection =>
+                        AccountBuilder.Create((command.Id, ObjectId.GenerateNewId()))
+                            .OfType(AccountType.Checking)
+                            .ForUser(BudgetingContextSeed.TestUserForCommands)
+                            .BuildSingle());
+                });
+
+            "When I call the API"
+                .x(async () =>
+                {
+                    const string requestUri = "/api/v2/accounts/favorite-account";
+
+                    response = await client.PutAsJsonAsync(requestUri, command);
+                });
+
+            "Then the status code should indicate success"
+                .x(() => response.Should()
+                    .NotBeNull()
+                    .And.BeOfType<HttpResponseMessage>()
+                    .Which.IsSuccessStatusCode.Should().BeTrue());
         }
     }
 }

@@ -12,10 +12,12 @@ namespace DrifterApps.Holefeeder.Budgeting.Application.Queries
     public class GetAccountHandler : IRequestHandler<GetAccountQuery, AccountViewModel>
     {
         private readonly IAccountQueriesRepository _repository;
+        private readonly ItemsCache _cache; 
 
-        public GetAccountHandler(IAccountQueriesRepository repository)
+        public GetAccountHandler(IAccountQueriesRepository repository, ItemsCache cache)
         {
             _repository = repository;
+            _cache = cache;
         }
 
         public async Task<AccountViewModel> Handle(GetAccountQuery query,
@@ -23,7 +25,7 @@ namespace DrifterApps.Holefeeder.Budgeting.Application.Queries
         {
             query.ThrowIfNull(nameof(query));
 
-            var results = await _repository.FindByIdAsync(query.UserId, query.Id, cancellationToken);
+            var results = await _repository.FindByIdAsync((Guid)_cache["UserId"], query.Id, cancellationToken);
             return results;
         }
     }

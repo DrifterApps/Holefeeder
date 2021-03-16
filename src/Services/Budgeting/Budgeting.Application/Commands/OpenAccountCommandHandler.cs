@@ -45,7 +45,7 @@ namespace DrifterApps.Holefeeder.Budgeting.Application.Commands
 
                 _logger.LogInformation("----- Opening Account - Account: {@Account}", account);
 
-                await _repository.CreateAsync(account, cancellationToken);
+                await _repository.SaveAsync(account, cancellationToken);
 
                 await _repository.UnitOfWork.CommitAsync(cancellationToken);
 

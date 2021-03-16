@@ -80,25 +80,27 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Builders
 
         public void Build()
         {
-            var schema = new AccountSchema()
-            {
-                MongoId = _mongoId.ToString(),
-                Id = _id,
-                Name = _name,
-                Description = _description,
-                Type = _type,
-                UserId = _userId,
-                Favorite = _favorite,
-                Inactive = _inactive,
-                OpenBalance = _openBalance,
-                OpenDate = _openDate
-            };
-
             lock (_locker)
             {
                 _seed++;
-                _accounts.Add(schema);
+                _accounts.Add(BuildNew());
             }
         }
+
+        public AccountSchema BuildSingle() => BuildNew();
+
+        private AccountSchema BuildNew() => new()
+        {
+            MongoId = _mongoId.ToString(),
+            Id = _id,
+            Name = _name,
+            Description = _description,
+            Type = _type,
+            UserId = _userId,
+            Favorite = _favorite,
+            Inactive = _inactive,
+            OpenBalance = _openBalance,
+            OpenDate = _openDate
+        };
     }
 }

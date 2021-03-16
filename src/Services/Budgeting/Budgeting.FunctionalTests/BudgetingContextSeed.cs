@@ -16,17 +16,23 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests
     {
         public static readonly Guid TestUserGuid1 = Guid.NewGuid();
         public static readonly Guid TestUserGuid2 = Guid.NewGuid();
+        public static readonly Guid TestUserForCommands = Guid.NewGuid();
 
         public static readonly (Guid Id, ObjectId MongoId) Account1 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
         public static readonly (Guid Id, ObjectId MongoId) Account2 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
         public static readonly (Guid Id, ObjectId MongoId) Account3 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
         public static readonly (Guid Id, ObjectId MongoId) Account4 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) OpenAccountNoCashflows = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) OpenAccountWithCashflows = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) CloseAccount = new(Guid.NewGuid(), ObjectId.GenerateNewId());
 
         public static readonly (Guid Id, ObjectId MongoId) Category1 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
         public static readonly (Guid Id, ObjectId MongoId) Category2 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
         public static readonly (Guid Id, ObjectId MongoId) Category3 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Category4 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
 
         public static readonly (Guid Id, ObjectId MongoId) Cashflow1 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
+        public static readonly (Guid Id, ObjectId MongoId) Cashflow2 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
 
         public static readonly (Guid Id, ObjectId MongoId) Transaction1 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
         public static readonly (Guid Id, ObjectId MongoId) Transaction2 = new(Guid.NewGuid(), ObjectId.GenerateNewId());
@@ -52,17 +58,22 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests
             AccountBuilder.Create(Account2).OfType(AccountType.CreditCard).ForUser(TestUserGuid1).IsFavorite().Build();
             AccountBuilder.Create(Account3).OfType(AccountType.Loan).ForUser(TestUserGuid1).IsInactive().Build();
             AccountBuilder.Create(Account4).OfType(AccountType.Checking).ForUser(TestUserGuid2).Build();
+            AccountBuilder.Create(OpenAccountNoCashflows).OfType(AccountType.Checking).ForUser(TestUserForCommands).Build();
+            AccountBuilder.Create(OpenAccountWithCashflows).OfType(AccountType.Checking).ForUser(TestUserForCommands).Build();
             accounts.InsertMany(AccountBuilder.Accounts);
 
             var categories = database.GetCollection<CategorySchema>(CategorySchema.SCHEMA);
             CategoryBuilder.Create(Category1).OfType(CategoryType.Expense).ForUser(TestUserGuid1).Build();
             CategoryBuilder.Create(Category2).OfType(CategoryType.Gain).ForUser(TestUserGuid1).IsFavorite().Build();
             CategoryBuilder.Create(Category3).OfType(CategoryType.Expense).ForUser(TestUserGuid2).Build();
+            CategoryBuilder.Create(Category4).OfType(CategoryType.Expense).ForUser(TestUserForCommands).Build();
             categories.InsertMany(CategoryBuilder.Categories);
 
             var cashflows = database.GetCollection<CashflowSchema>(CashflowSchema.SCHEMA);
             CashflowBuilder.Create(Cashflow1).OfType(DateIntervalType.Weekly).WithFrequency(2).OfAmount(111)
                 .ForAccount(Account1).ForCategory(Category1).ForUser(TestUserGuid1).Build();
+            CashflowBuilder.Create(Cashflow2).OfType(DateIntervalType.Weekly).WithFrequency(2).OfAmount(111)
+                .ForAccount(OpenAccountWithCashflows).ForCategory(Category4).ForUser(TestUserForCommands).Build();
             cashflows.InsertMany(CashflowBuilder.Cashflows);
 
             var transactions = database.GetCollection<TransactionSchema>(TransactionSchema.SCHEMA);

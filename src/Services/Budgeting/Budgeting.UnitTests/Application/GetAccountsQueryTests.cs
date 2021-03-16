@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+using DrifterApps.Holefeeder.Budgeting.Application;
 using DrifterApps.Holefeeder.Budgeting.Application.Contracts;
 using DrifterApps.Holefeeder.Budgeting.Application.Models;
 using DrifterApps.Holefeeder.Budgeting.Application.Queries;
@@ -20,38 +21,12 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Application
     public class GetAccountsQueryTests
     {
         [Fact]
-        public void GivenQuery_WhenUserIdEmpty_ThenThrowArgumentNullException()
-        {
-            // given
-
-            // act
-            Action action = () => new GetAccountsQuery(Guid.Empty, QueryParams.DefaultOffset, QueryParams.DefaultLimit,
-                QueryParams.DefaultSort, QueryParams.DefaultFilter);
-
-            // assert
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void GivenQuery_WhenQueryParamsPassed_ThenQueryParamsBuilt()
-        {
-            // given
-
-            // act
-            Action action = () => new GetAccountsQuery(Guid.Empty, QueryParams.DefaultOffset, QueryParams.DefaultLimit,
-                QueryParams.DefaultSort, QueryParams.DefaultFilter);
-
-            // assert
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void GivenQuery_WhenNoQueryParamsPassed_ThenQueryParamsEmptyBuilt()
         {
             // given
 
             // act
-            var query = new GetAccountsQuery(Guid.NewGuid(), null, null, null, null);
+            var query = new GetAccountsQuery(null, null, null, null);
 
             // assert
             query.Query.Should().BeEquivalentTo(QueryParams.Empty);
@@ -63,17 +38,18 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Application
             // given
 
             // act
-            var query = new GetAccountsQuery(Guid.NewGuid(), 10, 20, new[] {"sort"}, new[] {"filter"});
+            var query = new GetAccountsQuery(10, 20, new[] {"sort"}, new[] {"filter"});
 
             // assert
-            query.UserId.Should().NotBeEmpty();
             query.Query.Should().BeEquivalentTo(new QueryParams(10, 20, new[] {"sort"}, new[] {"filter"}));
         }
 
         [Fact]
         public async void GivenHandle_WhenRequestIsNull_ThenThrowArgumentNullException()
         {
-            var handler = new GetAccountsHandler(Substitute.For<IAccountQueriesRepository>());
+            var cache = Substitute.For<ItemsCache>();
+            cache["UserId"] = Guid.NewGuid();
+            var handler = new GetAccountsHandler(Substitute.For<IAccountQueriesRepository>(), cache);
 
             Func<Task> action = async () => await handler.Handle(null);
 
@@ -84,14 +60,16 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Application
         public async void GivenHandle_WhenRequestIsValid_ThenReturnData()
         {
             // given
+            var cache = Substitute.For<ItemsCache>();
+            cache["UserId"] = Guid.NewGuid();
             var repository = Substitute.For<IAccountQueriesRepository>();
             repository.FindAsync(Arg.Any<Guid>(), Arg.Any<QueryParams>(), CancellationToken.None)
                 .Returns(TestAccountData);
 
-            var handler = new GetAccountsHandler(repository);
+            var handler = new GetAccountsHandler(repository, cache);
 
             // when
-            var result = await handler.Handle(new GetAccountsQuery(Guid.NewGuid(), null, null, null, null));
+            var result = await handler.Handle(new GetAccountsQuery(null, null, null, null));
 
             // then
             result.Should().BeEquivalentTo(TestAccountData);

@@ -10,18 +10,11 @@ namespace DrifterApps.Holefeeder.Budgeting.Application.Queries
 {
     public class GetAccountsQuery : IRequest<AccountViewModel[]>
     {
-        public Guid UserId { get; }
         public QueryParams Query { get; }
 
-        public GetAccountsQuery(Guid userId, int? offset, int? limit, IEnumerable<string> sort,
+        public GetAccountsQuery(int? offset, int? limit, IEnumerable<string> sort,
             IEnumerable<string> filter)
         {
-            if (userId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
-
-            UserId = userId;
             Query = new QueryParams(offset ?? QueryParams.DefaultOffset, limit ?? QueryParams.DefaultLimit,
                 sort ?? QueryParams.DefaultSort, filter ?? QueryParams.DefaultFilter);
         }

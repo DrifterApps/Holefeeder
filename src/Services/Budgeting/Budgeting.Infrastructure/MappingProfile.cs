@@ -11,6 +11,7 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure
         public MappingProfile()
         {
             CreateMap<AccountSchema, Account>()
+                .ForMember(entity => entity.Cashflows, opts => opts.Ignore())
                 .ReverseMap()
                 .ForMember(schema => schema.MongoId, opts => opts.Ignore());
 

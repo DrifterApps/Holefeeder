@@ -82,7 +82,7 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Application
             // assert
             result.Should().BeEquivalentTo(
                 CommandResult<Guid>.Create(CommandStatus.BadRequest, Guid.Empty,
-                    "name must be from 1 to 255 characters"),
+                    "Name must be from 1 to 255 characters"),
                 options => options.ComparingByMembers<CommandResult<Guid>>());
         }
 
@@ -109,7 +109,7 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Application
             // assert
             result.Should().BeEquivalentTo(
                 CommandResult<Guid>.Create(CommandStatus.BadRequest, Guid.Empty,
-                    "name must be from 1 to 255 characters"),
+                    "Name must be from 1 to 255 characters"),
                 options => options.ComparingByMembers<CommandResult<Guid>>());
         }
 
@@ -131,7 +131,7 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Application
             // assert
             result.Should().BeEquivalentTo(
                 CommandResult<Guid>.Create(CommandStatus.BadRequest, Guid.Empty,
-                    "openDate is required"),
+                    "OpenDate is required"),
                 options => options.ComparingByMembers<CommandResult<Guid>>());
         }
 
@@ -153,7 +153,7 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Application
             // assert
             result.Should().BeEquivalentTo(
                 CommandResult<Guid>.Create(CommandStatus.BadRequest, Guid.Empty,
-                    "userId is required"),
+                    "UserId is required"),
                 options => options.ComparingByMembers<CommandResult<Guid>>());
         }
 
@@ -164,8 +164,19 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Application
             var command = new OpenAccountCommand {Name = "new account", OpenDate = DateTime.Today};
             var repository = Substitute.For<IAccountRepository>();
             repository.FindByNameAsync(Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-                .Returns(new Account(Guid.NewGuid(), AccountType.Checking, "new account", false, Decimal.One,
-                    DateTime.Today, "description", false, Guid.NewGuid()));
+                .Returns(new Account
+                {
+                    Id = Guid.NewGuid(),
+                    Type = AccountType.Checking,
+                    Name = "new account",
+                    Favorite = false,
+                    OpenBalance = Decimal.One,
+                    OpenDate = DateTime.Today,
+                    Description = "description",
+                    Inactive = false,
+                    UserId = Guid.NewGuid(),
+                    Cashflows = Array.Empty<Guid>()
+                });
             var cache = Substitute.For<ItemsCache>();
             cache["UserId"] = Guid.NewGuid();
             var logger = Substitute.For<ILogger<OpenAccountCommandHandler>>();

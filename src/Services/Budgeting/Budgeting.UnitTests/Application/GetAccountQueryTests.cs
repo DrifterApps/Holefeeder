@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
+using DrifterApps.Holefeeder.Budgeting.Application;
 using DrifterApps.Holefeeder.Budgeting.Application.Contracts;
 using DrifterApps.Holefeeder.Budgeting.Application.Models;
 using DrifterApps.Holefeeder.Budgeting.Application.Queries;
@@ -18,24 +19,12 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Application
     public class GetAccountQueryTests
     {
         [Fact]
-        public void GivenQuery_WhenUserIdEmpty_ThenThrowArgumentNullException()
-        {
-            // given
-            
-            // act
-            Action action = () => new GetAccountQuery(Guid.Empty, Guid.NewGuid());
-            
-            // assert
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public void GivenQuery_WhenIdEmpty_ThenThrowArgumentNullException()
         {
             // given
             
             // act
-            Action action = () => new GetAccountQuery(Guid.NewGuid(), Guid.Empty);
+            Action action = () => new GetAccountQuery(Guid.Empty);
             
             // assert
             action.Should().Throw<ArgumentNullException>();
@@ -47,10 +36,9 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Application
             // given
             
             // act
-            var query = new GetAccountQuery(Guid.NewGuid(), Guid.NewGuid());
+            var query = new GetAccountQuery(Guid.NewGuid());
             
             // assert
-            query.UserId.Should().NotBeEmpty();
             query.Id.Should().NotBeEmpty();
         }
 
@@ -58,7 +46,9 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Application
         public async void GivenHandle_WhenRequestIsNull_ThenThrowArgumentNullException()
         {
             // given
-            var handler = new GetAccountHandler(Substitute.For<IAccountQueriesRepository>());
+            var cache = Substitute.For<ItemsCache>();
+            cache["UserId"] = Guid.NewGuid();
+            var handler = new GetAccountHandler(Substitute.For<IAccountQueriesRepository>(), cache);
 
             // act
             Func<Task> action = async () => await handler.Handle(null);
@@ -71,14 +61,16 @@ namespace DrifterApps.Holefeeder.Budgeting.UnitTests.Application
         public async void GivenHandle_WhenRequestIsValid_ThenReturnData()
         {
             // given
+            var cache = Substitute.For<ItemsCache>();
+            cache["UserId"] = Guid.NewGuid();
             var repository = Substitute.For<IAccountQueriesRepository>();
             repository.FindByIdAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), CancellationToken.None)
                 .Returns(TestAccountData);
 
-            var handler = new GetAccountHandler(repository);
+            var handler = new GetAccountHandler(repository, cache);
 
             // when
-            var result = await handler.Handle(new GetAccountQuery(Guid.NewGuid(), Guid.NewGuid()));
+            var result = await handler.Handle(new GetAccountQuery(Guid.NewGuid()));
 
             // then
             result.Should().BeEquivalentTo(TestAccountData);
