@@ -65,9 +65,7 @@ services:
 
   webspa:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Local
-      - ASPNETCORE_URLS=http://+
-      - HolefeederWeb__ApiUrl=http://localhost:5200
-      - HolefeederWeb__RedirectUrl=http://localhost
+      - NGX_API_URL=http://localhost:5200
+      - NGX_REDIRECT_URL=http://localhost
     ports:
       - '80:80'

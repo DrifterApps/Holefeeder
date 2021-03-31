@@ -17,8 +17,8 @@ namespace DrifterApps.Holefeeder.Web.Gateway
 {
     public class Startup
     {
-        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-        
+        private const string MY_ALLOW_SPECIFIC_ORIGINS = "_myAllowSpecificOrigins";
+
         private IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -28,10 +28,10 @@ namespace DrifterApps.Holefeeder.Web.Gateway
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var allowedOrigins = Configuration.GetSection("AllowedHosts")?.Get<string[]>() ?? Array.Empty<string>();
+            var allowedOrigins = Configuration.GetValue<string>("AllowedHosts").Split(";").ToArray();
             services.AddCors(options =>
             {
-                options.AddPolicy(MyAllowSpecificOrigins, builder =>
+                options.AddPolicy(MY_ALLOW_SPECIFIC_ORIGINS, builder =>
                 {
                     builder
                         .WithOrigins(allowedOrigins)
@@ -65,7 +65,7 @@ namespace DrifterApps.Holefeeder.Web.Gateway
             app.UseHttpsRedirection();
 
             app.UseMvc();
-            app.UseCors(MyAllowSpecificOrigins);
+            app.UseCors(MY_ALLOW_SPECIFIC_ORIGINS);
             
             app.UseSerilogRequestLogging()
                 // .UseRouting()

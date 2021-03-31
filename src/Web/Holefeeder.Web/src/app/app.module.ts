@@ -40,10 +40,10 @@ const COMPONENTS = [
   ExternalUrlDirective
 ];
 
-const AUTH_CONFIG_URL_TOKEN = new InjectionToken<string>('/assets/Settings');
+const AUTH_CONFIG_URL_TOKEN = new InjectionToken<string>('/assets/config');
 
 export function initializerFactory(config: ConfigService, configUrl: string): any {
-  const promise = config.init(configUrl).then(_ => {
+  const promise = config.loadAppConfig(configUrl).then(_ => {
     console.debug('Configuration initialized.');
   });
   return () => promise;
@@ -78,7 +78,7 @@ export function MSALGuardConfigFactory(config: ConfigService): MsalGuardConfigur
   ],
   providers: [
     ConfigService,
-    {provide: AUTH_CONFIG_URL_TOKEN, useValue: '/assets/Settings'},
+    {provide: AUTH_CONFIG_URL_TOKEN, useValue: '/assets/config'},
     {
       provide: APP_INITIALIZER, useFactory: initializerFactory,
       deps: [ConfigService, AUTH_CONFIG_URL_TOKEN], multi: true

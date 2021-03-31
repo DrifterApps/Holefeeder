@@ -44,7 +44,7 @@ namespace DrifterApps.Holefeeder.ObjectStore.API.Controllers
             _logger = logger.ThrowIfNull(nameof(logger));
         }
 
-        [HttpGet(Name = Routes.GET_STORE_ITEMS)]
+        [HttpGet(Routes.GET_STORE_ITEMS, Name = Routes.GET_STORE_ITEMS)]
         [ProducesResponseType(typeof(StoreItemViewModel[]), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]

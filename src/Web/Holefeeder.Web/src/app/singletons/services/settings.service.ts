@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '@app/shared/services/api.service';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ISettings, settingsToServer } from '../../shared/interfaces/settings.interface';
-import { Settings } from '../../shared/models/settings.model';
-import { DateIntervalType } from '../../shared/enums/date-interval-type.enum';
-import { ObjectData } from '../../shared/models/object-data.model';
-import { IObjectData } from '../../shared/interfaces/object-data.interface';
+import { ISettings, settingsToServer } from '@app/shared/interfaces/settings.interface';
+import { Settings } from '@app/shared/models/settings.model';
+import { DateIntervalType } from '@app/shared/enums/date-interval-type.enum';
+import { ObjectData } from '@app/shared/models/object-data.model';
+import { IObjectData } from '@app/shared/interfaces/object-data.interface';
 import { filter, map } from 'rxjs/operators';
 import { startOfToday } from 'date-fns';
 
@@ -13,7 +13,7 @@ import { startOfToday } from 'date-fns';
   providedIn: 'root'
 })
 export class SettingsService {
-  private basePath = 'api/v1/objects';
+  private basePath = 'api/v2/StoreItems';
   private objectData: IObjectData;
   private settings$ = new BehaviorSubject<ISettings>(Object.assign(
     new Settings(),
@@ -28,7 +28,7 @@ export class SettingsService {
 
   loadUserSettings() {
     this.api
-      .get(`${this.basePath}`)
+      .get(`${this.basePath}/get-store-items?filter=code=settings`)
       .pipe(
         filter(data => data.length !== 0),
         map(data => Object.assign(new ObjectData(), data[0]) as IObjectData)
