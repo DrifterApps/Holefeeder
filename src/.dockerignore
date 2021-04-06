@@ -1,6 +1,5 @@
 .dockerignore
 .idea/
-.run/
 .cache/
 .vs/
 .vscode/

@@ -67,13 +67,7 @@ namespace DrifterApps.Holefeeder.Web.Gateway
             app.UseMvc();
             app.UseCors(MY_ALLOW_SPECIFIC_ORIGINS);
             
-            app.UseSerilogRequestLogging()
-                // .UseRouting()
-                // .UseEndpoints(endpoints =>
-                // {
-                //     endpoints.MapControllers();
-                // })
-                ;
+            app.UseSerilogRequestLogging();
             await app.UseOcelot();
         }
     }

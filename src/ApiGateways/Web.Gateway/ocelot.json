@@ -40,6 +40,20 @@
       }
     },
     {
+      "DownstreamPathTemplate": "/api/v2/accounts/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "budgeting-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v2/accounts/{everything}",
+      "UpstreamHttpMethod": [
+        "GET"
+      ]
+    },
+    {
       "DownstreamPathTemplate": "/api/v2/cashflows/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

@@ -1,10 +1,10 @@
-FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:3.1-alpine AS base
 LABEL author="Drifter Apps Inc."
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS restore
+FROM mcr.microsoft.com/dotnet/sdk:3.1-alpine AS restore
 WORKDIR /src
 
 # It's important to keep lines from here down to "COPY . ." identical in all Dockerfiles
@@ -23,7 +23,6 @@ COPY Services/ObjectStore/ObjectStore.API/*.csproj Services/ObjectStore/ObjectSt
 COPY Services/ObjectStore/ObjectStore.Application/*.csproj Services/ObjectStore/ObjectStore.Application/
 COPY Services/ObjectStore/ObjectStore.Domain/*.csproj Services/ObjectStore/ObjectStore.Domain/
 COPY Services/ObjectStore/ObjectStore.Infrastructure/*.csproj Services/ObjectStore/ObjectStore.Infrastructure/
-COPY Web/Holefeeder.Web/*.csproj Web/Holefeeder.Web/
 
 COPY Services/Budgeting/Budgeting.UnitTests/*.csproj Services/Budgeting/Budgeting.UnitTests/
 COPY Services/Budgeting/Budgeting.FunctionalTests/*.csproj Services/Budgeting/Budgeting.FunctionalTests/

@@ -4,6 +4,7 @@ COPY Web/Holefeeder.Web/package*.json .
 RUN npm install
 
 FROM restore as build
+ENV NODE_OPTIONS="--max_old_space_size=8096"
 WORKDIR /app
 COPY Web/Holefeeder.Web/. .
 RUN npm run build -- --prod
