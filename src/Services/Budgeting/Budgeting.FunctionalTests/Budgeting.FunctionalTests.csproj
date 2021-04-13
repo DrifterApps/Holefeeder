@@ -4,7 +4,6 @@
         <TargetFramework>net5.0</TargetFramework>
         <IsPackable>false</IsPackable>
         <RootNamespace>DrifterApps.Holefeeder.Budgeting.FunctionalTests</RootNamespace>
-        <LangVersion>default</LangVersion>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="5.10.3" />

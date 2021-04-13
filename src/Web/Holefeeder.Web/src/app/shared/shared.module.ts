@@ -8,6 +8,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { DateViewComponent } from './components/date-view/date-view.component';
 import { AccountsService } from './services/accounts.service';
+import { AccountsServiceV2 } from './services/accounts-v2.service';
 import { TagsInputComponent } from './tags-input/tags-input.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { TransactionsService } from './services/transactions.service';
@@ -51,6 +52,7 @@ const COMPONENTS = [
     SubscriberService,
     CashflowsService,
     AccountsService,
+    AccountsServiceV2,
     CategoriesService,
     TransactionsService
   ]

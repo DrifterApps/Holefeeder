@@ -6,6 +6,7 @@ using DrifterApps.Holefeeder.Budgeting.Application;
 using DrifterApps.Holefeeder.Budgeting.Application.Behaviors;
 using DrifterApps.Holefeeder.Budgeting.Application.Contracts;
 using DrifterApps.Holefeeder.Budgeting.Application.Queries;
+using DrifterApps.Holefeeder.Budgeting.Domain.Enumerations;
 using DrifterApps.Holefeeder.Budgeting.Infrastructure;
 using DrifterApps.Holefeeder.Framework.SeedWork.Converters;
 
@@ -65,6 +66,8 @@ namespace DrifterApps.Holefeeder.Budgeting.API
                     options.JsonSerializerOptions.IgnoreNullValues = true;
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    // options.JsonSerializerOptions.Converters.Add(new EnumerationJsonConverter<AccountType>());
+                    // options.JsonSerializerOptions.Converters.Add(new EnumerationJsonConverter<CategoryType>());
                 });
 
             services.AddSwaggerGen(c =>
@@ -93,12 +96,6 @@ namespace DrifterApps.Holefeeder.Budgeting.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v2/swagger.json", "Budgeting.API v2"));
             }
-            else
-            {
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
 
             app.UseSerilogRequestLogging();
 

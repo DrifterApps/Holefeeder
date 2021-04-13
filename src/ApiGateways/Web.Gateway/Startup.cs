@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -57,14 +56,9 @@ namespace DrifterApps.Holefeeder.Web.Gateway
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
 
             app.UseMvc();
+            
             app.UseCors(MY_ALLOW_SPECIFIC_ORIGINS);
             
             app.UseSerilogRequestLogging();

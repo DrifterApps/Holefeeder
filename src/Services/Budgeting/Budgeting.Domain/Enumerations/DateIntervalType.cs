@@ -7,7 +7,7 @@ using DrifterApps.Holefeeder.Framework.SeedWork.Domain;
 
 namespace DrifterApps.Holefeeder.Budgeting.Domain.Enumerations
 {
-    [JsonConverter(typeof(EnumerationJsonConverter<CategoryType>))]
+    [JsonConverter(typeof(EnumerationJsonConverter<DateIntervalType>))]
     public abstract class DateIntervalType : Enumeration
     {
         public static readonly DateIntervalType Weekly = new WeeklyDateIntervalType(1, nameof(Weekly));

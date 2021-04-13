@@ -62,7 +62,7 @@ export class SettingsService {
         data: JSON.stringify(settingsToServer(settings))
       });
       await this.api
-        .put(`${this.basePath}/${this.objectData.id}`, this.objectData)
+        .put(`${this.basePath}/modify-store-item`, this.objectData)
         .toPromise();
     } else {
       this.objectData = Object.assign(

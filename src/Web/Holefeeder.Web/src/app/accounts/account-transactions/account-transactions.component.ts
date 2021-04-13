@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'dfta-account-transactions',
@@ -9,9 +9,11 @@ import { ActivatedRoute } from '@angular/router';
 export class AccountTransactionsComponent implements OnInit {
   accountId: string;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private accountService: AccountService) { }
 
   ngOnInit() {
-    this.accountId = this.route.parent.snapshot.paramMap.get('accountId');
+    this.accountService.accountSelected$.subscribe(account => {
+      this.accountId = account.id;
+    });
   }
 }

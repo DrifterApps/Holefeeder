@@ -1,16 +1,19 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {AccountsService} from '@app/shared/services/accounts.service';
-import {IAccountDetail} from '@app/shared/interfaces/account-detail.interface';
-import {UpcomingService} from '@app/singletons/services/upcoming.service';
-import {accountTypeMultiplier} from '@app/shared/enums/account-type.enum';
-import {faArrowLeft, faEdit, faPlus} from '@fortawesome/free-solid-svg-icons';
-import {IUpcoming} from "@app/shared/interfaces/v2/upcoming.interface";
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IAccountDetail } from '@app/shared/interfaces/v2/account-detail.interface';
+import { UpcomingService } from '@app/singletons/services/upcoming.service';
+import { faArrowLeft, faEdit, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { IUpcoming } from "@app/shared/interfaces/v2/upcoming.interface";
+import { categoryTypeMultiplier } from '@app/shared/interfaces/v2/category-type.interface';
+import { AccountsServiceV2 } from '@app/shared/services/accounts-v2.service';
+import { accountTypeMultiplier } from '@app/shared/interfaces/v2/account-type.interface';
+import { AccountService } from '../account.service';
 
 @Component({
   selector: 'dfta-account-details',
   templateUrl: './account-details.component.html',
-  styleUrls: ['./account-details.component.scss']
+  styleUrls: ['./account-details.component.scss'],
+  providers: [AccountService]
 })
 export class AccountDetailsComponent implements OnInit {
   account: IAccountDetail;
@@ -22,44 +25,43 @@ export class AccountDetailsComponent implements OnInit {
   faPlus = faPlus;
 
   constructor(
-    private accountsService: AccountsService,
+    private accountsService: AccountsServiceV2,
     private upcomingService: UpcomingService,
+    private accountService: AccountService,
     private router: Router,
     private route: ActivatedRoute
   ) {
   }
 
-  async ngOnInit() {
-    if (this.route.snapshot.paramMap.has('accountId')) {
-      this.account = await this.accountsService.findOneByIdWithDetails(
-        this.route.snapshot.paramMap.get('accountId')
-      );
-    } else {
-      this.router.navigate(['./']);
-    }
+  ngOnInit() {
+    this.route.params.subscribe(async params => {
+      const accountId = params['accountId'];
+      this.account = await this.accountsService.findOneById(accountId);
+      this.accountService.accountSelected(this.account);
 
-    this.upcomingService.cashflows.subscribe(cashflows =>
-      this.upcomingBalance =
+      this.isLoaded = true;
+      this.upcomingService.cashflows.subscribe(cashflows =>
+        this.upcomingBalance =
         this.account.balance +
         cashflows
-          .filter(cashflow => cashflow.account.mongoId === this.account.id)
+          .filter(cashflow => cashflow.account.id === this.account.id)
           .map(cashflow =>
             cashflow.amount *
-            cashflow.category.type.multiplier *
+            categoryTypeMultiplier(cashflow.category.type) *
             accountTypeMultiplier(this.account.type)
           )
           .reduce((sum, current) => sum + current, 0)
-    );
+      );
+      });
 
-    this.isLoaded = true;
   }
 
   edit() {
-    this.router.navigate(['edit'], {relativeTo: this.route});
+    this.router.navigate(['edit'], { relativeTo: this.route });
   }
 
   addTransaction() {
-    this.router.navigate(['transactions', 'create'], {queryParams: {accountId: this.account.id}});
+    this.router.navigate(['transactions', 'create'], { queryParams: { accountId: this.account.id } });
   }
 
   balanceClass(): string {

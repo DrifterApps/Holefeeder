@@ -2,9 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <UserSecretsId>aspnet-ObjectStore.API-D560EAA9-99AB-4C46-8CAF-3F60DBEADB03</UserSecretsId>
         <RootNamespace>DrifterApps.Holefeeder.ObjectStore.API</RootNamespace>
-        <LangVersion>default</LangVersion>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <DockerfileContext>..\..\..</DockerfileContext>
     </PropertyGroup>

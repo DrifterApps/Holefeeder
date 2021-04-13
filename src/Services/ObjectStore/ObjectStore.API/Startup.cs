@@ -77,8 +77,6 @@ namespace DrifterApps.Holefeeder.ObjectStore.API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v2/swagger.json", "ObjectStore.API v2"));
             }
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
 
             ConfigureAuth(app);
