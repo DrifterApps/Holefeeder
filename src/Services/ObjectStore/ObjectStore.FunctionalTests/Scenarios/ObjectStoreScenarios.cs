@@ -40,7 +40,7 @@ namespace ObjectStore.FunctionalTests.Scenarios
             "When I call the API"
                 .x(async () =>
                 {
-                    const string requestUri = "/api/v2/StoreItems/";
+                    const string requestUri = "/api/v2/StoreItems/get-store-items";
 
                     response = await client.GetAsync(requestUri);
                 });
@@ -80,7 +80,7 @@ namespace ObjectStore.FunctionalTests.Scenarios
             "When I call the API"
                 .x(async () =>
                 {
-                    var requestUri = $"/api/v2/StoreItems?filter={filter}";
+                    var requestUri = $"/api/v2/StoreItems/get-store-items?filter={filter}";
 
                     response = await client.GetAsync(requestUri);
                 });
@@ -122,7 +122,7 @@ namespace ObjectStore.FunctionalTests.Scenarios
             "When I call the API"
                 .x(async () =>
                 {
-                    var requestUri = $"/api/v2/StoreItems?sort={sort}&offset={offset}&limit={limit}";
+                    var requestUri = $"/api/v2/StoreItems/get-store-items?sort={sort}&offset={offset}&limit={limit}";
 
                     response = await client.GetAsync(requestUri);
                 });

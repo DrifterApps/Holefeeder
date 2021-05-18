@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '@app/shared/services/api.service';
-import { ICashflow, cashflowFromServer, cashflowToServer } from '../interfaces/cashflow.interface';
+import { ICashflow, cashflowToServer, cashflowFromServer } from '../interfaces/cashflow.interface';
 import { map } from 'rxjs/operators';
 import { HttpParams } from '@angular/common/http';
+import { cashflowDetailFromServer, ICashflowDetail } from '../interfaces/cashflow-detail.interface';
 
 @Injectable()
 export class CashflowsService {
-  private basePath = 'api/v1/cashflows';
+  private basePath = 'api/v2/cashflows';
 
   constructor(private api: ApiService) { }
 
@@ -15,7 +16,7 @@ export class CashflowsService {
     limit: number,
     sort: string[],
     filter: string[]
-  ): Promise<ICashflow[]> {
+  ): Promise<ICashflowDetail[]> {
     let params = new HttpParams();
     if (offset) {
       params = params.set('offset', `${offset}`);
@@ -34,23 +35,23 @@ export class CashflowsService {
       });
     }
     return this.api
-      .get(this.basePath, params)
+      .get(`${this.basePath}/get-cashflows`, params)
       .pipe(
         map(data =>
           Object.assign(
             [],
-            data.map(cashflowFromServer)
+            data.map(cashflowDetailFromServer)
           )
         )
       )
       .toPromise();
   }
 
-  findOneById(id: number | string): Promise<ICashflow> {
+  findOneById(id: number | string): Promise<ICashflowDetail> {
     return this.api
       .get(`${this.basePath}/${id}`)
       .pipe(
-        map(cashflowFromServer)
+        map(cashflowDetailFromServer)
       )
       .toPromise();
   }

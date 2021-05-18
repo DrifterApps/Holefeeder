@@ -10,10 +10,11 @@ import { CategoriesService } from '@app/shared/services/categories.service';
 import { IAccountDetail } from '@app/shared/interfaces/account-detail.interface';
 import { NgbDateParserAdapter } from '@app/shared/ngb-date-parser.adapter';
 import { DateIntervalTypeNames, DateIntervalType } from '@app/shared/enums/date-interval-type.enum';
-import { ICashflow } from '@app/shared/interfaces/cashflow.interface';
 import { Cashflow } from '@app/shared/models/cashflow.model';
 import { faArrowLeft, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { startOfToday } from 'date-fns';
+import { ICashflowDetail } from '@app/shared/interfaces/cashflow-detail.interface';
+import { CashflowDetail } from '@app/shared/models/cashflow-detail.model';
 
 @Component({
   selector: 'dfta-cashflow-edit',
@@ -28,7 +29,7 @@ export class CashflowEditComponent implements OnInit {
   confirmMessages: string;
 
   account: string;
-  cashflow: ICashflow;
+  cashflow: ICashflowDetail;
   cashflowForm: FormGroup;
 
   accounts: IAccountDetail[];
@@ -72,22 +73,18 @@ export class CashflowEditComponent implements OnInit {
     ], [
       'inactive!=true'
     ]);
-    this.categories = await this.categoriesService.find(null, null, [
-      '-favorite',
-      'name'
-    ]);
+    this.categories = await this.categoriesService.find();
 
     if (this.activatedRoute.snapshot.paramMap.has('cashflowId')) {
       this.cashflow = await this.cashflowsService.findOneById(
         this.activatedRoute.snapshot.paramMap.get('cashflowId')
       );
     } else {
-      this.cashflow = Object.assign(new Cashflow(), {
+      this.cashflow = Object.assign(new CashflowDetail(), {
         account: this.account ? this.account : this.accounts[0].id,
         category: this.categories[0].id,
         intervalType: DateIntervalType.monthly,
         effectiveDate: startOfToday(),
-        inactive: false
       });
     }
     this.cashflowForm.patchValue(this.cashflow);

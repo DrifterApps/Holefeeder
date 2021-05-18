@@ -1,5 +1,5 @@
 <ng-container *ngIf="(transactions$ | async) as transactions; else loading">
-  <ng-container *ngIf="transactions.items.length; else noItems">
+  <ng-container *ngIf="transactions.items; else noItems">
     <dfta-transaction-list-item
       [description]="
         transaction.description

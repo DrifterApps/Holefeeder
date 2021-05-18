@@ -20,6 +20,7 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Builders
         private Guid _id;
         private string _name;
         private CategoryType _type;
+        private string _color;
         private bool _favorite;
         private Guid _userId;
 
@@ -38,6 +39,7 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Builders
             _id = id;
             _name = $"Category{seed}";
             _type = CategoryType.Expense;
+            _color = $"#{seed}";
             _favorite = false;
             _userId = Guid.NewGuid();
         }
@@ -72,7 +74,8 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Builders
                 Name = _name,
                 Type = _type,
                 UserId = _userId,
-                Favorite = _favorite
+                Favorite = _favorite,
+                Color = _color
             };
 
             lock (_locker)

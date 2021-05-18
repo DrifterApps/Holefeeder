@@ -6,14 +6,16 @@ import { CashflowsService } from '@app/shared/services/cashflows.service';
 import { NgbDateAdapter, NgbModalRef, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ITransaction } from '@app/shared/interfaces/transaction.interface';
 import { Transaction } from '@app/shared/models/transaction.model';
-import { AccountsService } from '@app/shared/services/accounts.service';
+import { AccountsServiceV2 } from '@app/shared/services/accounts-v2.service';
 import { ICategory } from '@app/shared/interfaces/category.interface';
 import { CategoriesService } from '@app/shared/services/categories.service';
 import { TransactionsService } from '@app/shared/services/transactions.service';
-import { IAccountDetail } from '@app/shared/interfaces/account-detail.interface';
+import { IAccountDetail } from '@app/shared/interfaces/v2/account-detail.interface';
 import { NgbDateParserAdapter } from '@app/shared/ngb-date-parser.adapter';
 import { startOfToday } from 'date-fns';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { ITransactionDetail } from '@app/shared/interfaces/transaction-detail.interface';
+import { TransactionDetail } from '@app/shared/models/transaction-detail.model';
 
 @Component({
   selector: 'dfta-transaction-edit',
@@ -28,7 +30,7 @@ export class TransactionEditComponent implements OnInit {
   confirmMessages: string;
 
   account: string;
-  transaction: ITransaction;
+  transaction: ITransactionDetail;
   transactionForm: FormGroup;
 
   accounts: IAccountDetail[];
@@ -41,7 +43,7 @@ export class TransactionEditComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private accountsService: AccountsService,
+    private accountsService: AccountsServiceV2,
     private cashflowsService: CashflowsService,
     private categoriesService: CategoriesService,
     private transactionsService: TransactionsService,
@@ -67,10 +69,7 @@ export class TransactionEditComponent implements OnInit {
       'inactive!=true'
     ]);
 
-    this.categories = await this.categoriesService.find(null, null, [
-      '-favorite',
-      'name'
-    ]);
+    this.categories = await this.categoriesService.find();
 
     this.account = this.route.parent.snapshot.queryParamMap.get('accountId');
 
@@ -84,7 +83,7 @@ export class TransactionEditComponent implements OnInit {
         const cashflowId = this.route.snapshot.queryParamMap.get('cashflow');
         const cashflow = await this.cashflowsService.findOneById(cashflowId);
 
-        this.transaction = Object.assign(new Transaction(), {
+        this.transaction = Object.assign(new TransactionDetail(), {
           account: cashflow.account,
           cashflow: cashflow.id,
           category: cashflow.category,
@@ -96,7 +95,7 @@ export class TransactionEditComponent implements OnInit {
           tags: cashflow.tags ? cashflow.tags : []
         });
       } else {
-        this.transaction = Object.assign(new Transaction(), {
+        this.transaction = Object.assign(new TransactionDetail(), {
           account: this.account ? this.account : this.accounts[0].id,
           date: date,
           category: this.categories[0].id
@@ -104,7 +103,13 @@ export class TransactionEditComponent implements OnInit {
       }
     }
 
-    this.transactionForm.patchValue(this.transaction);
+    this.transactionForm.patchValue({
+      amount: this.transaction.amount,
+      date: this.transaction.date,
+      account: this.transaction.account.id,
+      category: this.transaction.category.id,
+      description: this.transaction.description
+    });
     if (this.transaction.tags) {
       const tags = this.transactionForm.get('tags') as FormArray;
       this.transaction.tags.forEach(t => tags.push(this.formBuilder.control(t)));

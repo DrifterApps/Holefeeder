@@ -22,6 +22,8 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
         private struct Routes
         {
             public const string GET_UPCOMING = "get-upcoming";
+            public const string GET_CASHFLOWS = "get-cashflows";
+            public const string GET_CASHFLOW = "get-cashflow";
         }
 
         private readonly IMediator _mediator;
@@ -40,14 +42,33 @@ namespace DrifterApps.Holefeeder.Budgeting.API.Controllers
         public async Task<IActionResult> GetUpcoming([FromQuery] DateTime from, [FromQuery] DateTime to,
             CancellationToken cancellationToken = default)
         {
-            var userId = User.GetUniqueId();
+            var response = await _mediator.Send(new GetUpcomingQuery(from, to), cancellationToken);
 
-            if (from > to)
-            {
-                return BadRequest();
-            }
+            return Ok(response);
+        }
 
-            var response = await _mediator.Send(new GetUpcomingQuery(userId, from, to), cancellationToken);
+        [HttpGet(Routes.GET_CASHFLOWS, Name = Routes.GET_CASHFLOWS)]
+        [ProducesResponseType(typeof(CashflowViewModel[]), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> GetCashflows([FromQuery] int? offset, int? limit, string[] sort,
+            string[] filter, CancellationToken cancellationToken = default)
+        {
+            var (totalCount, cashflowViewModels) = await _mediator.Send(new GetCashflowsQuery(offset, limit, sort, filter),
+                cancellationToken);
+
+            Response?.Headers?.Add("X-Total-Count", $"{totalCount}");
+
+            return Ok(cashflowViewModels);
+        }
+
+        [HttpGet("{id:guid}", Name = Routes.GET_CASHFLOW)]
+        [ProducesResponseType(typeof(CashflowViewModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> GetCashflow(Guid id, CancellationToken cancellationToken = default)
+        {
+            var response = await _mediator.Send(new GetCashflowQuery {Id = id}, cancellationToken);
 
             return Ok(response);
         }

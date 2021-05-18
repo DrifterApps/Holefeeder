@@ -36,7 +36,7 @@ namespace DrifterApps.Holefeeder.Framework.SeedWork.Domain
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Enumeration otherValue))
+            if (obj is not Enumeration otherValue)
             {
                 return false;
             }
@@ -87,12 +87,7 @@ namespace DrifterApps.Holefeeder.Framework.SeedWork.Domain
 
         public static bool operator ==(Enumeration left, Enumeration right)
         {
-            if (ReferenceEquals(left, null))
-            {
-                return ReferenceEquals(right, null);
-            }
-
-            return left.Equals(right);
+            return left?.Equals(right) ?? ReferenceEquals(right, null);
         }
 
         public static bool operator !=(Enumeration left, Enumeration right)

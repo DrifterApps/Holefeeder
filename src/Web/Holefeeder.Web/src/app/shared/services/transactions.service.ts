@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '@app/shared/services/api.service';
 import { ITransaction, transactionToServer, transactionFromServer } from '../interfaces/transaction.interface';
-import { ITransactionDetail } from '../interfaces/transaction-detail.interface';
+import { ITransactionDetail, transactionDetailFromServer } from '../interfaces/transaction-detail.interface';
 import { HttpParams } from '@angular/common/http';
 import { IPagingInfo } from '../interfaces/paging-info.interface';
 import { map, tap } from 'rxjs/operators';
@@ -9,7 +9,7 @@ import { UpcomingService } from '@app/singletons/services/upcoming.service';
 
 @Injectable()
 export class TransactionsService {
-  private basePath = 'api/v1/transactions';
+  private basePath = 'api/v2/transactions';
 
   constructor(private upcomingService: UpcomingService, private api: ApiService) { }
 
@@ -35,7 +35,7 @@ export class TransactionsService {
       });
     }
     return this.api
-      .getList(this.basePath, params)
+      .getList(`${this.basePath}/get-transactions`, params)
       .pipe(
         map(data =>
           Object.assign(
@@ -44,7 +44,7 @@ export class TransactionsService {
               totalCount: data.totalCount,
               items: Object.assign(
                 [],
-                data.items.map(transactionFromServer)
+                data.items.map(transactionDetailFromServer)
               )
             }
           )
@@ -53,11 +53,11 @@ export class TransactionsService {
       .toPromise();
   }
 
-  findOneById(id: number | string): Promise<ITransaction> {
+  findOneById(id: number | string): Promise<ITransactionDetail> {
     return this.api
       .get(`${this.basePath}/${id}`)
       .pipe(
-        map(transactionFromServer)
+        map(transactionDetailFromServer)
       )
       .toPromise();
   }

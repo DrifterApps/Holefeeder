@@ -52,7 +52,7 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
             Expression<Func<AccountSchema, bool>> accountsPredicate, QueryParams queryParams,
             CancellationToken cancellationToken)
         {
-            var accountCollection = await DbContext.GetAccountsAsync(cancellationToken);
+            var accountCollection = DbContext.Accounts;
 
             var accounts = await accountCollection
                 .AsQueryable()
@@ -60,8 +60,8 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
                 .Filter(queryParams.Filter)
                 .ToListAsync(cancellationToken);
 
-            var transactionCollection = await DbContext.GetTransactionsAsync(cancellationToken);
-            var categoryCollection = await DbContext.GetCategoriesAsync(cancellationToken);
+            var transactionCollection = DbContext.Transactions;
+            var categoryCollection = DbContext.Categories;
 
             var summaries = await accountCollection.AsQueryable()
                 .Where(accountsPredicate)

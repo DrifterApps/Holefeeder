@@ -106,7 +106,7 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests
             var context = this.Services.GetService<IMongoDbContext>() ??
                           throw new ArgumentNullException($"Unable to get IMongoDbContext");
 
-            var coll = await context.GetAccountsAsync();
+            var coll = context.Accounts;
             
             var schema = predicate(coll);
             

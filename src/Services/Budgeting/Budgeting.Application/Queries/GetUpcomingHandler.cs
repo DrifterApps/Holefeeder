@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DrifterApps.Holefeeder.Budgeting.Application.Contracts;
@@ -11,10 +12,12 @@ namespace DrifterApps.Holefeeder.Budgeting.Application.Queries
     public class GetUpcomingHandler : IRequestHandler<GetUpcomingQuery, UpcomingViewModel[]>
     {
         private readonly IUpcomingQueriesRepository _repository;
+        private readonly ItemsCache _cache;
 
-        public GetUpcomingHandler(IUpcomingQueriesRepository repository)
+        public GetUpcomingHandler(IUpcomingQueriesRepository repository, ItemsCache cache)
         {
             _repository = repository;
+            _cache = cache;
         }
 
         public async Task<UpcomingViewModel[]> Handle(GetUpcomingQuery query,
@@ -22,7 +25,7 @@ namespace DrifterApps.Holefeeder.Budgeting.Application.Queries
         {
             query.ThrowIfNull(nameof(query));
 
-            var results = await _repository.GetUpcomingAsync(query.UserId, query.From, query.To, cancellationToken);
+            var results = await _repository.GetUpcomingAsync((Guid)_cache["UserId"], query.From, query.To, cancellationToken);
             return results.ToArray();
         }
     }

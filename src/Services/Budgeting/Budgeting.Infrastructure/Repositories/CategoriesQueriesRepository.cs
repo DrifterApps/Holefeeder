@@ -22,7 +22,7 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
 
         public async Task<IEnumerable<CategoryViewModel>> GetCategoriesAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            var categoryCollection = await DbContext.GetCategoriesAsync(cancellationToken);
+            var categoryCollection = DbContext.Categories;
 
             var categories = await categoryCollection.AsQueryable()
                 .Where(x => !x.System && x.UserId == userId).ToListAsync(cancellationToken: cancellationToken);

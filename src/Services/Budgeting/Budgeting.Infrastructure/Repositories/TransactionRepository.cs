@@ -19,8 +19,7 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
         public IUnitOfWork UnitOfWork { get; }
         private readonly IMongoDbContext _mongoDbContext;
         private readonly IMapper _mapper;
-
-
+        
         public TransactionRepository(IUnitOfWork unitOfWork, IMongoDbContext mongoDbContext, IMapper mapper)
         {
             UnitOfWork = unitOfWork.ThrowIfNull(nameof(mapper));
@@ -30,23 +29,25 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
 
         public async Task<Transaction> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var collection = await _mongoDbContext.GetTransactionsAsync(cancellationToken);
-            var schema = collection.AsQueryable().Where(t => t.Id == id).SingleOrDefaultAsync(cancellationToken);
+            var collection = _mongoDbContext.Transactions;
+            var schema = await collection.AsQueryable().Where(t => t.Id == id).SingleOrDefaultAsync(cancellationToken);
 
             return _mapper.Map<Transaction>(schema);
         }
 
-        public async Task CreateAsync(Transaction transaction, CancellationToken cancellationToken = default)
+        public Task CreateAsync(Transaction transaction, CancellationToken cancellationToken = default)
         {
             var schema = _mapper.Map<TransactionSchema>(transaction);
 
-            var collection = await _mongoDbContext.GetTransactionsAsync(cancellationToken);
+            var collection = _mongoDbContext.Transactions;
 
             _mongoDbContext.AddCommand(async () =>
             {
                 await collection.InsertOneAsync(schema, new InsertOneOptions {BypassDocumentValidation = false},
                     cancellationToken);
             });
+
+            return Task.CompletedTask;
         }
 
         public Task UpdateAsync(Transaction account, CancellationToken cancellationToken = default)
@@ -56,7 +57,7 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
 
         public async Task<bool> IsAccountActive(Guid id, CancellationToken cancellationToken)
         {
-            var collection = await _mongoDbContext.GetAccountsAsync(cancellationToken);
+            var collection = _mongoDbContext.Accounts;
 
             return await collection.AsQueryable()
                 .AnyAsync(a => a.Id == id && !a.Inactive, cancellationToken: cancellationToken);

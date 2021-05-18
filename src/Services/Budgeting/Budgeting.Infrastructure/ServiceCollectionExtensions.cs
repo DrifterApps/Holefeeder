@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-
-using DrifterApps.Holefeeder.Budgeting.Application.Contracts;
+﻿using DrifterApps.Holefeeder.Budgeting.Application.Contracts;
 using DrifterApps.Holefeeder.Budgeting.Domain.BoundedContext.AccountContext;
 using DrifterApps.Holefeeder.Budgeting.Domain.BoundedContext.TransactionContext;
 using DrifterApps.Holefeeder.Budgeting.Infrastructure.Context;
@@ -25,11 +23,14 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure
             services.AddSingleton<IHolefeederDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<HolefeederDatabaseSettings>>().Value);
             services.AddSingleton<IMongoDbContext, MongoDbContext>();
-
+            services.AddHostedService<ConfigureMongoDbIndexesService>();
+            
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountQueriesRepository, AccountQueriesRepository>();
+            services.AddScoped<ICashflowQueriesRepository, CashflowQueriesRepository>();
             services.AddScoped<ICategoryQueries, CategoriesQueriesRepository>();
+            services.AddScoped<ITransactionQueriesRepository, TransactionQueriesRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IUpcomingQueriesRepository, UpcomingQueriesRepository>();
 

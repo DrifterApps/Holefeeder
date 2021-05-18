@@ -33,12 +33,12 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
 
         public async Task<Account> FindByIdAsync(Guid id, Guid userId, CancellationToken cancellationToken = default)
         {
-            var collection = await _mongoDbContext.GetAccountsAsync(cancellationToken);
+            var collection = _mongoDbContext.Accounts;
 
             var schema = await collection.AsQueryable()
                 .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId, cancellationToken);
 
-            var cashflowsCollection = await _mongoDbContext.GetCashflowsAsync(cancellationToken);
+            var cashflowsCollection = _mongoDbContext.Cashflows;
 
             var schemaId = schema.MongoId;
             var cashflows = await cashflowsCollection.AsQueryable()
@@ -63,7 +63,7 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
         public async Task<Account> FindByNameAsync(string name, Guid userId,
             CancellationToken cancellationToken = default)
         {
-            var collection = await _mongoDbContext.GetAccountsAsync(cancellationToken);
+            var collection = _mongoDbContext.Accounts;
 
             var schema = await collection.AsQueryable()
                 .FirstOrDefaultAsync(
@@ -75,7 +75,7 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
 
         public async Task SaveAsync(Account entity, CancellationToken cancellationToken = default)
         {
-            var collection = await _mongoDbContext.GetAccountsAsync(cancellationToken);
+            var collection = _mongoDbContext.Accounts;
 
             var id = entity.Id;
             var userId = entity.UserId;

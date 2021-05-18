@@ -5,5 +5,4 @@ export interface ICategory {
   color: string;
   budgetAmount: number;
   favorite: boolean;
-  system: boolean;
 }

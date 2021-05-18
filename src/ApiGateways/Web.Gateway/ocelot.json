@@ -40,34 +40,6 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/api/v2/accounts/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "budgeting-api",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/v2/accounts/{everything}",
-      "UpstreamHttpMethod": [
-        "GET"
-      ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/v2/cashflows/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "budgeting-api",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/v2/cashflows/{everything}",
-      "UpstreamHttpMethod": [
-        "GET"
-      ]
-    },
-    {
       "DownstreamPathTemplate": "/api/v2/StoreItems/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -101,6 +73,20 @@
         "TtlSeconds": 15,
         "Region": "transactionscaching"
       }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v2/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "budgeting-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v2/{everything}",
+      "UpstreamHttpMethod": [
+        "GET"
+      ]
     }
   ],
   "GlobalConfiguration": {

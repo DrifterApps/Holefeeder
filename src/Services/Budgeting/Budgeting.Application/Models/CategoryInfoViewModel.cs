@@ -1,23 +1,10 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 
 using DrifterApps.Holefeeder.Budgeting.Domain.Enumerations;
-using DrifterApps.Holefeeder.Framework.SeedWork.Converters;
 
 namespace DrifterApps.Holefeeder.Budgeting.Application.Models
 {
-    public class CategoryInfoViewModel
+    public record CategoryInfoViewModel(Guid Id, string Name, CategoryType Type, string Color)
     {
-        public Guid Id { get; }
-
-        public string Name { get; }
-
-        public CategoryType Type { get; }
-
-        public string Color { get; }
-
-        [JsonConstructor]
-        public CategoryInfoViewModel(Guid id, string name, CategoryType type, string color) => 
-            (Id, Name, Type, Color) = (id, name, type, color ?? String.Empty);
     }
 }

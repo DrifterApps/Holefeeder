@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -9,6 +12,8 @@ using DrifterApps.Holefeeder.Budgeting.Domain.Enumerations;
 using DrifterApps.Holefeeder.Budgeting.Domain.Extensions;
 
 using FluentAssertions;
+using FluentAssertions.Equivalency;
+using FluentAssertions.Execution;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 
@@ -65,13 +70,16 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Scenarios
                         .NotBeEmpty()
                         .And.HaveCount(1)
                         .And.ContainEquivalentOf(
-                            new UpcomingViewModel(BudgetingContextSeed.Cashflow1.Id,
-                                new DateTime(2020, 1, 16), 111, "Cashflow1",
-                                new CategoryInfoViewModel(BudgetingContextSeed.Category1.Id, "Category1",
-                                    CategoryType.Expense, string.Empty),
-                                new AccountInfoViewModel(BudgetingContextSeed.Account1.Id, "Account1",
-                                    BudgetingContextSeed.Account1.MongoId.ToString()),
-                                null));
+                            new UpcomingViewModel
+                            {
+                                Id = BudgetingContextSeed.Cashflow1.Id,
+                                Date = new DateTime(2020, 1, 16),
+                                Amount = 111,
+                                Description = "Cashflow1",
+                                Category = new CategoryInfoViewModel(BudgetingContextSeed.Category1.Id, "Category1",
+                                    CategoryType.Expense, "#1"),
+                                Account = new AccountInfoViewModel(BudgetingContextSeed.Account1.Id, "Account1")
+                            });
                 });
         }
 
@@ -118,22 +126,30 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Scenarios
             "With the unpaid cashflow"
                 .x(() => result.Should()
                     .ContainEquivalentOf(
-                        new UpcomingViewModel(BudgetingContextSeed.Cashflow1.Id,
-                            new DateTime(2020, 1, 16), 111, "Cashflow1",
-                            new CategoryInfoViewModel(BudgetingContextSeed.Category1.Id, "Category1",
-                                CategoryType.Expense, string.Empty),
-                            new AccountInfoViewModel(BudgetingContextSeed.Account1.Id, "Account1",
-                                BudgetingContextSeed.Account1.MongoId.ToString()), null)));
+                        new UpcomingViewModel
+                        {
+                            Id = BudgetingContextSeed.Cashflow1.Id,
+                            Date = new DateTime(2020, 1, 16),
+                            Amount = 111,
+                            Description = "Cashflow1",
+                            Category = new CategoryInfoViewModel(BudgetingContextSeed.Category1.Id, "Category1",
+                                CategoryType.Expense, "#1"),
+                            Account = new AccountInfoViewModel(BudgetingContextSeed.Account1.Id, "Account1")
+                        }));
 
             "And the current period's cashflow"
                 .x(() => result.Should()
                     .ContainEquivalentOf(
-                        new UpcomingViewModel(BudgetingContextSeed.Cashflow1.Id,
-                            new DateTime(2020, 1, 30), 111, "Cashflow1",
-                            new CategoryInfoViewModel(BudgetingContextSeed.Category1.Id, "Category1",
-                                CategoryType.Expense, string.Empty),
-                            new AccountInfoViewModel(BudgetingContextSeed.Account1.Id, "Account1",
-                                BudgetingContextSeed.Account1.MongoId.ToString()), null)));
+                        new UpcomingViewModel
+                        {
+                            Id = BudgetingContextSeed.Cashflow1.Id,
+                            Date = new DateTime(2020, 1, 30),
+                            Amount = 111,
+                            Description = "Cashflow1",
+                            Category = new CategoryInfoViewModel(BudgetingContextSeed.Category1.Id, "Category1",
+                                CategoryType.Expense, "#1"),
+                            Account = new AccountInfoViewModel(BudgetingContextSeed.Account1.Id, "Account1")
+                        }));
         }
 
         [Scenario]
@@ -179,22 +195,30 @@ namespace DrifterApps.Holefeeder.Budgeting.FunctionalTests.Scenarios
             "With the current period's cashflow"
                 .x(() => result.Should()
                     .ContainEquivalentOf(
-                        new UpcomingViewModel(BudgetingContextSeed.Cashflow1.Id,
-                            new DateTime(2020, 1, 16), 111, "Cashflow1",
-                            new CategoryInfoViewModel(BudgetingContextSeed.Category1.Id, "Category1",
-                                CategoryType.Expense, string.Empty),
-                            new AccountInfoViewModel(BudgetingContextSeed.Account1.Id, "Account1",
-                                BudgetingContextSeed.Account1.MongoId.ToString()), null)));
+                        new UpcomingViewModel
+                        {
+                            Id = BudgetingContextSeed.Cashflow1.Id,
+                            Date = new DateTime(2020, 1, 16),
+                            Amount = 111,
+                            Description = "Cashflow1",
+                            Category = new CategoryInfoViewModel(BudgetingContextSeed.Category1.Id, "Category1",
+                                CategoryType.Expense, "#1"),
+                            Account = new AccountInfoViewModel(BudgetingContextSeed.Account1.Id, "Account1")
+                        }, o => o.ComparingByValue<CategoryType>()));
 
             "And the following period's cashflow"
                 .x(() => result.Should()
                     .ContainEquivalentOf(
-                        new UpcomingViewModel(BudgetingContextSeed.Cashflow1.Id,
-                            new DateTime(2020, 1, 30), 111, "Cashflow1",
-                            new CategoryInfoViewModel(BudgetingContextSeed.Category1.Id, "Category1",
-                                CategoryType.Expense, string.Empty),
-                            new AccountInfoViewModel(BudgetingContextSeed.Account1.Id, "Account1",
-                                BudgetingContextSeed.Account1.MongoId.ToString()), null)));
+                        new UpcomingViewModel
+                        {
+                            Id = BudgetingContextSeed.Cashflow1.Id,
+                            Date = new DateTime(2020, 1, 30),
+                            Amount = 111,
+                            Description = "Cashflow1",
+                            Category = new CategoryInfoViewModel(BudgetingContextSeed.Category1.Id, "Category1",
+                                CategoryType.Expense, "#1"),
+                            Account = new AccountInfoViewModel(BudgetingContextSeed.Account1.Id, "Account1")
+                        }, options => options.ComparingByMembers<UpcomingViewModel>()));
         }
     }
 }

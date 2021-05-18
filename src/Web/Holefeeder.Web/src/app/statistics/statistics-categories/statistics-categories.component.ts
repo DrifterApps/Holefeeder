@@ -30,7 +30,7 @@ export class StatisticsCategoriesComponent implements OnInit {
     private router: Router) {}
 
   async ngOnInit() {
-    this.categories = await this.categoriesService.find(null, null, null);
+    this.categories = await this.categoriesService.find();
 
     combineLatest([
       this.settingsService.settings,

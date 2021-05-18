@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,10 +24,10 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
             DateTime endDate,
             CancellationToken cancellationToken = default)
         {
-            var transactionCollection = await DbContext.GetTransactionsAsync(cancellationToken);
-            var cashflowCollection = await DbContext.GetCashflowsAsync(cancellationToken);
-            var accountCollection = await DbContext.GetAccountsAsync(cancellationToken);
-            var categoryCollection = await DbContext.GetCategoriesAsync(cancellationToken);
+            var transactionCollection = DbContext.Transactions;
+            var cashflowCollection = DbContext.Cashflows;
+            var accountCollection = DbContext.Accounts;
+            var categoryCollection = DbContext.Categories;
 
             var pastCashflows = await transactionCollection.AsQueryable()
                 .Where(x => x.UserId == userId && !string.IsNullOrEmpty(x.Cashflow))
@@ -93,11 +94,17 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
                     }
 
                     return dates.Select(d =>
-                        new UpcomingViewModel(x.Cashflow.Id, d, x.Cashflow.Amount, x.Cashflow.Description,
-                            new CategoryInfoViewModel(x.Category.Id, x.Category.Name, x.Category.Type,
+                        new UpcomingViewModel
+                        {
+                            Id = x.Cashflow.Id,
+                            Date = d,
+                            Amount = x.Cashflow.Amount,
+                            Description = x.Cashflow.Description,
+                            Tags = x.Cashflow.Tags?.ToImmutableArray() ?? ImmutableArray<string>.Empty,
+                            Category = new CategoryInfoViewModel(x.Category.Id, x.Category.Name, x.Category.Type,
                                 x.Category.Color),
-                            new AccountInfoViewModel(x.Account.Id, x.Account.Name, x.Account.MongoId),
-                            x.Cashflow.Tags));
+                            Account = new AccountInfoViewModel(x.Account.Id, x.Account.Name)
+                        });
                 }).Where(x => x.Date <= endDate)
                 .OrderBy(x => x.Date);
 
