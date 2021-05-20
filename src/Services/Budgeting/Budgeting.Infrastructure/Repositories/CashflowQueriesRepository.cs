@@ -43,6 +43,7 @@ namespace DrifterApps.Holefeeder.Budgeting.Infrastructure.Repositories
                     Recurrence = cs.Recurrence,
                     Description = cs.Description,
                     Tags = cs.Tags,
+                    Inactive = cs.Inactive,
                     Account = a.Id,
                     AccountName = a.Name,
                     Category = c.Id,

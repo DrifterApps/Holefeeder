@@ -6,30 +6,30 @@ services:
     image: ${DOCKER_REGISTRY:-holefeeder}/holefeeder-gateway-web:${VERSION:-latest}
     build:
       context: .
-      dockerfile: ./ApiGateways/Web.Gateway/Dockerfile
+      dockerfile: ./src/ApiGateways/Web.Gateway/Dockerfile
 
   budgeting-api:
     image: ${DOCKER_REGISTRY:-holefeeder}/holefeeder-budgeting-api:${VERSION:-latest}
     build:
       context: .
-      dockerfile: ./Services/Budgeting/Budgeting.API/Dockerfile
+      dockerfile: ./src/Services/Budgeting/Budgeting.API/Dockerfile
 
   object-store-api:
     image: ${DOCKER_REGISTRY:-holefeeder}/holefeeder-object-store-api:${VERSION:-latest}
     build:
       context: .
-      dockerfile: ./Services/ObjectStore/ObjectStore.API/Dockerfile
+      dockerfile: ./src/Services/ObjectStore/ObjectStore.API/Dockerfile
 
   legacy-api:
     image: ${DOCKER_REGISTRY:-holefeeder}/holefeeder-legacy-api:${VERSION:-latest}
     build:
       context: .
-      dockerfile: ./Legacy/DrifterApps.Holefeeder.ServicesHosts.BudgetApi/Dockerfile
+      dockerfile: ./src/Legacy/DrifterApps.Holefeeder.ServicesHosts.BudgetApi/Dockerfile
 
   webspa:
     image: ${DOCKER_REGISTRY:-holefeeder}/holefeeder-web:${VERSION:-latest}
     build:
       context: .
-      dockerfile: ./Web/Holefeeder.Web/Dockerfile
+      dockerfile: ./src/Web/Holefeeder.Web/Dockerfile
     depends_on:
       - gateway-web

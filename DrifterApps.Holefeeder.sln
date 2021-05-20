@@ -9,43 +9,43 @@ ProjectSection(SolutionItems) = preProject
 	.editorconfig = .editorconfig
 EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeting.Domain", "Services\Budgeting\Budgeting.Domain\Budgeting.Domain.csproj", "{B8905A6D-15E6-458A-89F6-63C7795792F1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeting.Domain", "src\Services\Budgeting\Budgeting.Domain\Budgeting.Domain.csproj", "{B8905A6D-15E6-458A-89F6-63C7795792F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeting.UnitTests", "Services\Budgeting\Budgeting.UnitTests\Budgeting.UnitTests.csproj", "{5343E86C-A6D9-4161-8D96-307AEB9D8986}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeting.UnitTests", "src\Services\Budgeting\Budgeting.UnitTests\Budgeting.UnitTests.csproj", "{5343E86C-A6D9-4161-8D96-307AEB9D8986}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeting.FunctionalTests", "Services\Budgeting\Budgeting.FunctionalTests\Budgeting.FunctionalTests.csproj", "{4B6D6015-E492-4042-BCAF-3426184B034D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeting.FunctionalTests", "src\Services\Budgeting\Budgeting.FunctionalTests\Budgeting.FunctionalTests.csproj", "{4B6D6015-E492-4042-BCAF-3426184B034D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeting.Infrastructure", "Services\Budgeting\Budgeting.Infrastructure\Budgeting.Infrastructure.csproj", "{6D5E8F88-6580-42EF-AD7E-478D2BECB724}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeting.Infrastructure", "src\Services\Budgeting\Budgeting.Infrastructure\Budgeting.Infrastructure.csproj", "{6D5E8F88-6580-42EF-AD7E-478D2BECB724}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Gateway", "ApiGateways\Web.Gateway\Web.Gateway.csproj", "{5944C370-C514-4C05-B765-7473DD654678}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Gateway", "src\ApiGateways\Web.Gateway\Web.Gateway.csproj", "{5944C370-C514-4C05-B765-7473DD654678}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeting.Application", "Services\Budgeting\Budgeting.Application\Budgeting.Application.csproj", "{91FDBA4C-C0E8-4ADE-96D4-C6ED33073166}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeting.Application", "src\Services\Budgeting\Budgeting.Application\Budgeting.Application.csproj", "{91FDBA4C-C0E8-4ADE-96D4-C6ED33073166}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.SeedWork", "BuildingBlocks\Framework.SeedWork\Framework.SeedWork.csproj", "{D9F1BF2F-2787-4474-A772-BA1F0208FB7D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.SeedWork", "src\BuildingBlocks\Framework.SeedWork\Framework.SeedWork.csproj", "{D9F1BF2F-2787-4474-A772-BA1F0208FB7D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{25AE5A14-81B1-4B5A-A9F3-8EB86CD468BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Business", "Legacy\DrifterApps.Holefeeder.Business\DrifterApps.Holefeeder.Business.csproj", "{D17438D7-A41D-4D16-B3BE-C0C20A18093C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Business", "src\Legacy\DrifterApps.Holefeeder.Business\DrifterApps.Holefeeder.Business.csproj", "{D17438D7-A41D-4D16-B3BE-C0C20A18093C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Business.Contracts", "Legacy\DrifterApps.Holefeeder.Business.Contracts\DrifterApps.Holefeeder.Business.Contracts.csproj", "{5C9BFC72-6B4A-45B1-906C-AC8B34C8DDEC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Business.Contracts", "src\Legacy\DrifterApps.Holefeeder.Business.Contracts\DrifterApps.Holefeeder.Business.Contracts.csproj", "{5C9BFC72-6B4A-45B1-906C-AC8B34C8DDEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Business.Entities", "Legacy\DrifterApps.Holefeeder.Business.Entities\DrifterApps.Holefeeder.Business.Entities.csproj", "{9B074D2F-776F-42F7-A16E-1F9C7515F5CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Business.Entities", "src\Legacy\DrifterApps.Holefeeder.Business.Entities\DrifterApps.Holefeeder.Business.Entities.csproj", "{9B074D2F-776F-42F7-A16E-1F9C7515F5CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Common", "Legacy\DrifterApps.Holefeeder.Common\DrifterApps.Holefeeder.Common.csproj", "{7652F634-B614-4786-9DDF-E86CA8EA3956}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Common", "src\Legacy\DrifterApps.Holefeeder.Common\DrifterApps.Holefeeder.Common.csproj", "{7652F634-B614-4786-9DDF-E86CA8EA3956}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Common.IoC", "Legacy\DrifterApps.Holefeeder.Common.IoC\DrifterApps.Holefeeder.Common.IoC.csproj", "{4C87D754-7440-4770-87F8-BEF00DEC9409}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Common.IoC", "src\Legacy\DrifterApps.Holefeeder.Common.IoC\DrifterApps.Holefeeder.Common.IoC.csproj", "{4C87D754-7440-4770-87F8-BEF00DEC9409}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.ResourcesAccess.Contracts", "Legacy\DrifterApps.Holefeeder.ResourcesAccess.Contracts\DrifterApps.Holefeeder.ResourcesAccess.Contracts.csproj", "{97CD4DB4-329C-430B-B8B9-E4F5F90A6B2A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.ResourcesAccess.Contracts", "src\Legacy\DrifterApps.Holefeeder.ResourcesAccess.Contracts\DrifterApps.Holefeeder.ResourcesAccess.Contracts.csproj", "{97CD4DB4-329C-430B-B8B9-E4F5F90A6B2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.ResourcesAccess.Mongo", "Legacy\DrifterApps.Holefeeder.ResourcesAccess.Mongo\DrifterApps.Holefeeder.ResourcesAccess.Mongo.csproj", "{842CABE7-8003-476F-93CF-B1DD00272AFB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.ResourcesAccess.Mongo", "src\Legacy\DrifterApps.Holefeeder.ResourcesAccess.Mongo\DrifterApps.Holefeeder.ResourcesAccess.Mongo.csproj", "{842CABE7-8003-476F-93CF-B1DD00272AFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Services.BudgetApi", "Legacy\DrifterApps.Holefeeder.Services.BudgetApi\DrifterApps.Holefeeder.Services.BudgetApi.csproj", "{87BCE71A-2275-41E8-83FC-4A2A27BAE0C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Services.BudgetApi", "src\Legacy\DrifterApps.Holefeeder.Services.BudgetApi\DrifterApps.Holefeeder.Services.BudgetApi.csproj", "{87BCE71A-2275-41E8-83FC-4A2A27BAE0C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Services.BudgetDto", "Legacy\DrifterApps.Holefeeder.Services.BudgetDto\DrifterApps.Holefeeder.Services.BudgetDto.csproj", "{ABADE85C-8B3D-4D60-B338-373D5A7D1EF3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.Services.BudgetDto", "src\Legacy\DrifterApps.Holefeeder.Services.BudgetDto\DrifterApps.Holefeeder.Services.BudgetDto.csproj", "{ABADE85C-8B3D-4D60-B338-373D5A7D1EF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.ServicesHosts.BudgetApi", "Legacy\DrifterApps.Holefeeder.ServicesHosts.BudgetApi\DrifterApps.Holefeeder.ServicesHosts.BudgetApi.csproj", "{D5025608-A5C1-430D-BD48-25F0FE98BBA6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrifterApps.Holefeeder.ServicesHosts.BudgetApi", "src\Legacy\DrifterApps.Holefeeder.ServicesHosts.BudgetApi\DrifterApps.Holefeeder.ServicesHosts.BudgetApi.csproj", "{D5025608-A5C1-430D-BD48-25F0FE98BBA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeting.API", "Services\Budgeting\Budgeting.API\Budgeting.API.csproj", "{9D85B750-3B14-447B-A180-EE48ACB0578C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeting.API", "src\Services\Budgeting\Budgeting.API\Budgeting.API.csproj", "{9D85B750-3B14-447B-A180-EE48ACB0578C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D656D1B9-4F13-4BAB-9117-60F22C30F331}"
 EndProject
@@ -59,25 +59,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{22F067DA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingBlocks", "{BC1AAE8B-FDB2-4017-B565-81125E6D4E12}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{639C95A6-923B-4626-BCC0-A8C4D70C89A3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ObjectStore", "ObjectStore", "{BE907AE8-813D-4E29-986E-79AF5E16445E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9BB6DD3A-EA4A-47D8-AD27-D53CB520A2AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectStore.API", "Services\ObjectStore\ObjectStore.API\ObjectStore.API.csproj", "{F31C69B1-4FDA-4E49-AA24-FE47FF48EF4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectStore.API", "src\Services\ObjectStore\ObjectStore.API\ObjectStore.API.csproj", "{F31C69B1-4FDA-4E49-AA24-FE47FF48EF4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectStore.Infrastructure", "Services\ObjectStore\ObjectStore.Infrastructure\ObjectStore.Infrastructure.csproj", "{34FBAD42-E924-4149-9ACE-E0FB092FAE4F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectStore.Infrastructure", "src\Services\ObjectStore\ObjectStore.Infrastructure\ObjectStore.Infrastructure.csproj", "{34FBAD42-E924-4149-9ACE-E0FB092FAE4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectStore.Domain", "Services\ObjectStore\ObjectStore.Domain\ObjectStore.Domain.csproj", "{67E0C0DA-69ED-4896-B237-5BE0DD026922}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectStore.Domain", "src\Services\ObjectStore\ObjectStore.Domain\ObjectStore.Domain.csproj", "{67E0C0DA-69ED-4896-B237-5BE0DD026922}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectStore.UnitTests", "Services\ObjectStore\ObjectStore.UnitTests\ObjectStore.UnitTests.csproj", "{9BBD08CE-28EC-4654-80B5-57345539B071}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectStore.UnitTests", "src\Services\ObjectStore\ObjectStore.UnitTests\ObjectStore.UnitTests.csproj", "{9BBD08CE-28EC-4654-80B5-57345539B071}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectStore.FunctionalTests", "Services\ObjectStore\ObjectStore.FunctionalTests\ObjectStore.FunctionalTests.csproj", "{74AB8845-87EE-4FA0-83FB-152BAD819014}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectStore.FunctionalTests", "src\Services\ObjectStore\ObjectStore.FunctionalTests\ObjectStore.FunctionalTests.csproj", "{74AB8845-87EE-4FA0-83FB-152BAD819014}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Mongo.SeedWork", "BuildingBlocks\Framework.Mongo.SeedWork\Framework.Mongo.SeedWork.csproj", "{F4F14078-FEDF-4C06-A9B0-1557F0F5B4F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Mongo.SeedWork", "src\BuildingBlocks\Framework.Mongo.SeedWork\Framework.Mongo.SeedWork.csproj", "{F4F14078-FEDF-4C06-A9B0-1557F0F5B4F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectStore.Application", "Services\ObjectStore\ObjectStore.Application\ObjectStore.Application.csproj", "{0A3AB0B4-9E22-4A72-BE31-77CDBA7FBCDD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectStore.Application", "src\Services\ObjectStore\ObjectStore.Application\ObjectStore.Application.csproj", "{0A3AB0B4-9E22-4A72-BE31-77CDBA7FBCDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -418,7 +416,6 @@ Global
 		{D9F1BF2F-2787-4474-A772-BA1F0208FB7D} = {BC1AAE8B-FDB2-4017-B565-81125E6D4E12}
 		{5343E86C-A6D9-4161-8D96-307AEB9D8986} = {22F067DA-DB97-4384-BE3B-888DF0312DAE}
 		{4B6D6015-E492-4042-BCAF-3426184B034D} = {22F067DA-DB97-4384-BE3B-888DF0312DAE}
-		{639C95A6-923B-4626-BCC0-A8C4D70C89A3} = {D656D1B9-4F13-4BAB-9117-60F22C30F331}
 		{BE907AE8-813D-4E29-986E-79AF5E16445E} = {DA66D2E5-2B59-456D-AA54-2AA9D7A5A490}
 		{9BB6DD3A-EA4A-47D8-AD27-D53CB520A2AA} = {BE907AE8-813D-4E29-986E-79AF5E16445E}
 		{F31C69B1-4FDA-4E49-AA24-FE47FF48EF4A} = {BE907AE8-813D-4E29-986E-79AF5E16445E}
