@@ -41,6 +41,9 @@ services:
     environment:
       - NGX_API_URL=http://localhost:5200
       - NGX_REDIRECT_URL=http://localhost
+      - NGINX_PORT=80
+    volumes:
+      - ./templates:/etc/nginx/templates
     ports:
       - '80:80'
 
